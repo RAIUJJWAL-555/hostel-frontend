@@ -8,6 +8,7 @@ import Header from '../Student/Header';
 
 // API ke liye Base URL
 const BASE_URL = `${import.meta.env.VITE_API_URL}/api`;
+console.log("Backend API Base URL:", BASE_URL);
 
 // InputField component ko LoginPage se bahar define kiya gaya hai
 const InputField = ({ name, type, placeholder, value, onChange, icon, required = true }) => (
