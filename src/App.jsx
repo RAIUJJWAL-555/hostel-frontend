@@ -28,35 +28,35 @@ const App = () => {
         <Route
           path="/admin/dashboard"
           element={
-            <ProtectedRoute>
+            <ProtectedRoute allowedRole="admin">
               <AdminDashboard />
             </ProtectedRoute>
           }
         />
        <Route path="/admin/dashboard/approved" element={
-  <ProtectedRoute>
+  <ProtectedRoute allowedRole="admin">
     <AdminDashboard />
   </ProtectedRoute>
 } />
 {/* <Route path="/admin/dashboard/fee" element={
-  <ProtectedRoute>
+  <ProtectedRoute allowedRole="admin">
     <FeeManagement/>
   </ProtectedRoute>
 } /> */}
 
       
         <Route path='/admin/dashboard/room' element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRole="admin">
             <RoomInventory/>
           </ProtectedRoute>
         } />
         <Route path='/admin/dashboard/room/allot' element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRole="admin">
             <RoomAllotment/>
           </ProtectedRoute>
         } />
         <Route path='/student/dashboard' element={
-          <ProtectedRoute>
+          <ProtectedRoute allowedRole="student">
             <Dashboard/>
           </ProtectedRoute>
         } />

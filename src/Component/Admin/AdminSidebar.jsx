@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 // ❌ NavLink हटा दिया गया
 
@@ -40,104 +40,174 @@ const navItems = [
 ];
 
 // ⭐ onNavigate और currentView props यहाँ प्राप्त करें
-const AdminSidebar = ({ onLogout, currentView, onNavigate }) => {
+const AdminSidebar = ({ onLogout, currentView, onNavigate, isMobileOpen, onClose }) => {
     const [isExpanded, setIsExpanded] = useState(true);
+    const [isMobile, setIsMobile] = useState(false); // Default to false to avoid SSR/hydration issues
+
+    useEffect(() => {
+        // Update isMobile on mount
+        setIsMobile(window.innerWidth < 1024);
+
+        const handleResize = () => {
+            setIsMobile(window.innerWidth < 1024);
+        };
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
+
+    // Mobile Sidebar Variants
+    const sidebarVariants = {
+        desktop: { 
+            width: isExpanded ? 280 : 80,
+            x: 0,
+            transition: { type: "spring", stiffness: 300, damping: 30 }
+        },
+        mobileOpen: { 
+            width: 280,
+            x: 0,
+            transition: { type: "spring", stiffness: 300, damping: 30 }
+        },
+        mobileClosed: { 
+            width: 280,
+            x: "-100%",
+            transition: { type: "spring", stiffness: 300, damping: 30 }
+        }
+    };
 
     return (
-        <motion.aside
-            className="fixed top-0 left-0 h-full bg-[#1F2A44] text-white shadow-2xl z-40 flex flex-col pt-4 pb-4"
-            animate={{ width: isExpanded ? 280 : 80 }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-        >
-            {/* Logo/Title Section (Unchanged) */}
-            <div className="flex items-center p-4 border-b border-gray-700 h-20">
-                {isExpanded && (
-                    <motion.h1 
-                        className="text-2xl font-extrabold text-blue-300 whitespace-nowrap overflow-hidden"
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.1 }}
-                    >
-                        Hostel Admin
-                    </motion.h1>
-                )}
-                {!isExpanded && (
-                    <span className="text-2xl font-extrabold text-blue-300 mx-auto">
-                        A
-                    </span>
-                )}
-            </div>
-            
+        <>
+            {/* Mobile Overlay Backdrop */}
+            {isMobileOpen && (
+                <div 
+                    className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
+                    onClick={onClose}
+                />
+            )}
 
-            {/* ⭐ Navigation Links (NavLink replaced with motion.button) */}
-            <nav className="flex flex-col flex-grow mt-4 space-y-2 overflow-y-auto">
-                {navItems.map((item) => (
-                    <motion.button // 👈 NavLink replaced
-                        key={item.name}
-                        onClick={() => onNavigate(item.view)} // 👈 State update on click
-                        className={`flex items-center transition-all duration-300 py-3 ${isExpanded ? 'px-6' : 'px-0 justify-center'} 
-                        ${item.view === currentView ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'}`
-                        }
-                        whileHover={{ scale: 1.05 }}
+            <motion.aside
+                className={`fixed top-0 left-0 h-full bg-[#1F2A44] text-white shadow-2xl z-40 flex flex-col pt-4 pb-4
+                            lg:translate-x-0 lg:static lg:h-screen lg:z-auto`}
+                // Use different variants based on screen size (handled via CSS classes + Framer Motion)
+                // However, Framer Motion 'animate' prop overrides CSS transforms.
+                // We need to conditionally apply animation states.
+                initial={false}
+                animate={
+                    !isMobile 
+                        ? "desktop"
+                        : (isMobileOpen ? "mobileOpen" : "mobileClosed")
+                }
+                variants={sidebarVariants}
+                // Ensure we listen to resize to reset state if needed, but for now simple logic:
+                // On mobile, we rely on isMobileOpen. On desktop, we rely on isExpanded.
+                // Note: Mixing window.innerWidth in render can be tricky with hydration, 
+                // but for a client-side app it's often okay. 
+                // Better approach: Use a media query hook or CSS-first approach.
+                // Let's stick to a robust CSS + Motion approach.
+                style={{
+                    position: 'fixed',
+                    height: '100vh'
+                }}
+            >
+                {/* Logo/Title Section */}
+                <div className="flex items-center p-4 border-b border-gray-700 h-20 justify-between">
+                    {isExpanded && (
+                        <motion.h1 
+                            className="text-2xl font-extrabold text-blue-300 whitespace-nowrap overflow-hidden"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.1 }}
+                        >
+                            Hostel Admin
+                        </motion.h1>
+                    )}
+                    {!isExpanded && (
+                        <span className="text-2xl font-extrabold text-blue-300 mx-auto">
+                            A
+                        </span>
+                    )}
+                    
+                    {/* Mobile Close Button */}
+                    <button 
+                        onClick={onClose}
+                        className="lg:hidden text-gray-400 hover:text-white"
                     >
-                        <item.icon />
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                    </button>
+                </div>
+                
+
+                {/* Navigation Links */}
+                <nav className="flex flex-col flex-grow mt-4 space-y-2 overflow-y-auto">
+                    {navItems.map((item) => (
+                        <motion.button 
+                            key={item.name}
+                            onClick={() => onNavigate(item.view)} 
+                            className={`flex items-center transition-all duration-300 py-3 ${isExpanded ? 'px-6' : 'px-0 justify-center'} 
+                            ${item.view === currentView ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'}`
+                            }
+                            whileHover={{ scale: 1.05 }}
+                        >
+                            <item.icon />
+                            {isExpanded && (
+                                <motion.span
+                                    className="ml-4 font-medium whitespace-nowrap overflow-hidden"
+                                    variants={linkVariants}
+                                    initial={false}
+                                    animate={isExpanded ? "expanded" : "collapsed"}
+                                >
+                                    {item.name}
+                                </motion.span>
+                            )}
+                        </motion.button>
+                    ))}
+                </nav>
+
+                {/* Collapse/Toggle Button and Logout */}
+                <div className="mt-auto border-t border-gray-700 pt-4 flex flex-col space-y-2">
+                    {/* Toggle Button (Desktop Only) */}
+                    <motion.button
+                        onClick={() => setIsExpanded(!isExpanded)}
+                        className={`hidden lg:flex text-gray-300 hover:bg-gray-700 py-3 transition-colors duration-200 items-center ${isExpanded ? 'px-6 justify-end' : 'justify-center'}`}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                    >
+                        <motion.svg 
+                            xmlns="http://www.w3.org/2000/svg" 
+                            className="h-6 w-6" 
+                            fill="none" 
+                            viewBox="0 0 24 24" 
+                            stroke="currentColor"
+                            animate={{ rotate: isExpanded ? 180 : 0 }} 
+                            transition={{ duration: 0.3 }}
+                        >
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12h.01" />
+                        </motion.svg>
+                    </motion.button>
+
+                    {/* Logout Button */}
+                    <motion.button
+                        onClick={onLogout}
+                        className={`flex items-center text-red-400 hover:bg-red-900 py-3 transition-colors duration-200 ${isExpanded ? 'px-6' : 'justify-center'}`}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                    >
+                        <LogoutIcon />
                         {isExpanded && (
-                            <motion.span
+                            <motion.span 
                                 className="ml-4 font-medium whitespace-nowrap overflow-hidden"
                                 variants={linkVariants}
                                 initial={false}
                                 animate={isExpanded ? "expanded" : "collapsed"}
                             >
-                                {item.name}
+                                Logout
                             </motion.span>
                         )}
                     </motion.button>
-                ))}
-            </nav>
-
-            {/* Collapse/Toggle Button and Logout (Unchanged) */}
-            <div className="mt-auto border-t border-gray-700 pt-4 flex flex-col space-y-2">
-                {/* Toggle Button (Unchanged) */}
-                <motion.button
-                    onClick={() => setIsExpanded(!isExpanded)}
-                    className={`text-gray-300 hover:bg-gray-700 py-3 transition-colors duration-200 flex items-center ${isExpanded ? 'px-6 justify-end' : 'justify-center'}`}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                >
-                    <motion.svg 
-                        xmlns="http://www.w3.org/2000/svg" 
-                        className="h-6 w-6" 
-                        fill="none" 
-                        viewBox="0 0 24 24" 
-                        stroke="currentColor"
-                        animate={{ rotate: isExpanded ? 180 : 0 }} 
-                        transition={{ duration: 0.3 }}
-                    >
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12h.01" />
-                    </motion.svg>
-                </motion.button>
-
-                {/* Logout Button (Unchanged) */}
-                <motion.button
-                    onClick={onLogout}
-                    className={`flex items-center text-red-400 hover:bg-red-900 py-3 transition-colors duration-200 ${isExpanded ? 'px-6' : 'justify-center'}`}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                >
-                    <LogoutIcon />
-                    {isExpanded && (
-                        <motion.span 
-                            className="ml-4 font-medium whitespace-nowrap overflow-hidden"
-                            variants={linkVariants}
-                            initial={false}
-                            animate={isExpanded ? "expanded" : "collapsed"}
-                        >
-                            Logout
-                        </motion.span>
-                    )}
-                </motion.button>
-            </div>
-        </motion.aside>
+                </div>
+            </motion.aside>
+        </>
     );
 };
 

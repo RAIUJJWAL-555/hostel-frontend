@@ -80,7 +80,7 @@ const Dashboard = () => {
 
     if (!studentDataString) {
       toast.error("Please log in to access the dashboard.");
-      navigate("/login/student"); 
+      navigate("/login"); 
       return;
     }
 
@@ -109,7 +109,7 @@ const Dashboard = () => {
   const handleLogout = () => {
     localStorage.removeItem("studentData");
     toast.info("You have been logged out.");
-    navigate("/login/student");
+    navigate("/login");
   };
 
 
