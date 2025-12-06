@@ -2,11 +2,11 @@ import React, { useState, useEffect, useRef } from 'react';
 
 // Fee data for easier management and rendering
 const feeData = {
-  boys: [
-    { category: 'General', roomFee: '3,500', messFee: '3,500', total: '45,500', color: 'cyan' },
-    { category: 'OBC', roomFee: '3,250', messFee: '3,200', total: '41,650', color: 'blue' },
-    { category: 'SC/ST', roomFee: '2,800', messFee: '2,700', total: '35,200', color: 'indigo' },
-  ],
+  // boys: [
+  //   { category: 'General', roomFee: '3,500', messFee: '3,500', total: '45,500', color: 'cyan' },
+  //   { category: 'OBC', roomFee: '3,250', messFee: '3,200', total: '41,650', color: 'blue' },
+  //   { category: 'SC/ST', roomFee: '2,800', messFee: '2,700', total: '35,200', color: 'indigo' },
+  // ],
   girls: [
     { category: 'General', roomFee: '3,200', messFee: '3,500', total: '45,200', color: 'pink' },
     { category: 'OBC', roomFee: '2,950', messFee: '3,200', total: '41,350', color: 'purple' },
@@ -85,19 +85,17 @@ const HostelFee = () => {
         {/* Hostel Sections */}
         <div className="mt-12 space-y-16">
           {/* Boys Hostel */}
-          <div>
+          {/* <div>
             <h2 className={`text-3xl font-bold mb-8 transition-all duration-700 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-              <span className="bg-blue-600 text-white py-2 px-4 rounded-lg">For Boys' Hostel</span>
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {feeData.boys.map((item, index) => <FeeCard key={`boys-${index}`} data={item} index={index + 2} />)}
             </div>
-          </div>
+          </div> */}
 
           {/* Girls Hostel */}
           <div>
             <h2 className={`text-3xl font-bold mb-8 transition-all duration-700 delay-300 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-              <span className="bg-pink-600 text-white py-2 px-4 rounded-lg">For Girls' Hostel</span>
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {feeData.girls.map((item, index) => <FeeCard key={`girls-${index}`} data={item} index={index + 5} />)}
