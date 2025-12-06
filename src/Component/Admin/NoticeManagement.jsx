@@ -6,7 +6,7 @@ import { Trash2, Send, AlertCircle, CheckCircle } from "lucide-react";
 // Assuming you have an API config file, or use the base URL directly
 // import { API_BASE_URL } from "../../apiConfig"; 
 // Using a hardcoded base URL for now based on your previous files context (usually localhost:5000 or from environment)
-const API_BASE_URL = "http://localhost:5000"; 
+ 
 
 const NoticeManagement = () => {
   const [notices, setNotices] = useState([]);
@@ -21,7 +21,7 @@ const NoticeManagement = () => {
 
   const fetchNotices = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/notices`);
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/notices`);
       if (response.ok) {
         const data = await response.json();
         setNotices(data);
@@ -43,7 +43,7 @@ const NoticeManagement = () => {
 
     setLoading(true);
     try {
-      const response = await fetch(`${API_BASE_URL}/api/notices`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/notices`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -72,7 +72,7 @@ const NoticeManagement = () => {
     console.log("Deleting notice with ID:", id);
 
     try {
-      const response = await fetch(`${API_BASE_URL}/api/notices/${id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/notices/${id}`, {
         method: "DELETE",
       });
 
@@ -90,7 +90,7 @@ const NoticeManagement = () => {
 
   const toggleNoticeStatus = async (id, currentStatus) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/notices/${id}`, {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/notices/${id}`, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json",
