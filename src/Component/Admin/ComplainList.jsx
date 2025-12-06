@@ -159,8 +159,70 @@ const ComplaintList = () => {
                 </p>
             )}
 
-            {/* ⭐ RESPONSIVENESS: overflow-x-auto for horizontal scrolling on mobile */}
-            <div className="overflow-x-auto shadow-2xl rounded-xl border border-gray-200">
+            {/* ⭐ RESPONSIVENESS: Mobile Card Layout */}
+            <div className="grid grid-cols-1 gap-6 md:hidden">
+                {complaints.map((c) => (
+                    <motion.div 
+                        key={`mobile-${c._id}`}
+                        className="bg-white p-5 rounded-xl shadow-md border border-gray-100 flex flex-col space-y-4"
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                    >
+                        <div className="flex justify-between items-start">
+                            <div className="flex-1">
+                                <h3 
+                                    className="text-lg font-bold text-indigo-700 mb-1 cursor-pointer hover:underline"
+                                    onClick={() => handleViewDetails(c)}
+                                >
+                                    {c.subject}
+                                </h3>
+                                <div className="text-xs text-gray-500 font-semibold uppercase tracking-wide">{c.category}</div>
+                            </div>
+                            <span className={`px-2 py-1 text-xs font-bold rounded-full ${getStatusClasses(c.status)}`}>
+                                {c.status}
+                            </span>
+                        </div>
+
+                        <div className="border-t border-b border-gray-50 py-3 space-y-2">
+                             <div className="flex justify-between text-sm">
+                                <span className="text-gray-500">Student:</span>
+                                <span className="font-medium text-gray-900">{c.studentName}</span>
+                             </div>
+                             <div className="flex justify-between text-sm">
+                                <span className="text-gray-500">Room:</span>
+                                <span className="font-medium text-gray-900">{c.roomAllotted || 'N/A'}</span>
+                             </div>
+                             <div className="flex justify-between text-sm">
+                                <span className="text-gray-500">Date:</span>
+                                <span className="font-medium text-gray-900">{new Date(c.filedAt).toLocaleDateString('en-IN')}</span>
+                             </div>
+                        </div>
+
+                        <div className="flex space-x-3 pt-1">
+                            {/* Start Button */}
+                            <button 
+                                onClick={() => handleStatusUpdate(c._id, 'In Progress')} 
+                                className={`flex-1 py-2 text-sm rounded-lg font-semibold transition-colors shadow-sm ${c.status !== 'Pending' ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'}`}
+                                disabled={c.status !== 'Pending'} 
+                            >
+                                Start
+                            </button>
+                            
+                            {/* Resolve Button */}
+                            <button 
+                                onClick={() => handleStatusUpdate(c._id, 'Resolved')} 
+                                className={`flex-1 py-2 text-sm rounded-lg font-semibold transition-colors shadow-sm ${c.status === 'Resolved' ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : 'bg-green-100 text-green-700 hover:bg-green-200'}`}
+                                disabled={c.status === 'Resolved'} 
+                            >
+                                Resolve
+                            </button>
+                        </div>
+                    </motion.div>
+                ))}
+            </div>
+
+            {/* ⭐ RESPONSIVENESS: Desktop Table Layout */}
+            <div className="hidden md:block overflow-x-auto shadow-2xl rounded-xl border border-gray-200 mt-6">
                 <table className="min-w-full divide-y divide-gray-200">
                     
                     {/* Table Header: Consistent Indigo Styling */}

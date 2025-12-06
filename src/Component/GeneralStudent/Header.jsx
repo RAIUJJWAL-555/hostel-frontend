@@ -1,34 +1,7 @@
-// import React from 'react'
-// import NotificationBanner from './NotificationBanner'
-// import gpg_logo_no_bg from '../../assets/gpg_logo_no_bg.png'
-// import Navbar from './Navbar'
-
-// const Header = () => {
-//   return (
-//     <div className='border-b-4'>
-//       <NotificationBanner/>
-//       <div className='w-full bg-[#1F2A44] text-white flex flex-row justify-between  items-center p-2 '>
-//         <div className='flex items-center p-3'>
-//           <img src={gpg_logo_no_bg} alt="" className='w-20 md:w-28 '/>
-//         <h1 className='px-4 text-[15px]  md:text-lg lg:text-xl  font-bold'>Government Polytechnic Ghaziabad Hostel <span className='block font-medium md:text-center text-sm italic '>(Aicte registered, 1998 established)</span></h1>
-//         </div>
-//         <Navbar/>
-//       </div>
-      
-//     </div>
-//   )
-// }
-
-// export default Header
 import React, { useState, useEffect } from 'react';
 import { NavLink, Link } from 'react-router-dom';
+import NoticeBoard from './NoticeBoard';
 
-// --- Placeholder Components ---
-const NotificationBanner = () => (
-    <div className="bg-cyan-500 text-center py-2 text-white text-sm font-semibold">
-        <span>Announcements: New semester starts next month!</span>
-    </div>
-);
 
 // --- SVG Icons ---
 const MenuIcon = ({ className }) => (
@@ -90,7 +63,7 @@ const InteractiveHeader = () => {
 
   return (
     <header className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled ? 'shadow-lg' : ''}`}>
-      <NotificationBanner/>
+      <NoticeBoard/>
       <div className={`w-full bg-[#1F2A44] text-white transition-all duration-300 ${isScrolled ? 'bg-opacity-95 backdrop-blur-lg' : 'bg-opacity-100'}`}>
         <div className="container mx-auto flex items-center justify-between transition-all duration-300 px-4" style={{ height: isScrolled ? '70px' : '90px' }}>
           

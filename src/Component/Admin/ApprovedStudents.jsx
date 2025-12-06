@@ -62,48 +62,98 @@ const ApprovedStudents = () => {
             No approved applications found at this time.
           </p>
         ) : (
-          // ⭐ RESPONSIVENESS: Overflow-x-auto allows horizontal scrolling on mobile
-          <div className="overflow-x-auto shadow-2xl rounded-xl mt-4 border border-gray-100">
-            {/* min-w-full ensures the table expands fully within its container for scrolling */}
-            <table className="min-w-full divide-y divide-indigo-200"> 
-              {/* ⭐ ENHANCEMENT: Table Header Styling */}
-              <thead className="bg-indigo-600">
-                <tr>
-                  {[
-                      "Name", "Application Number", "Email", "DOB", "Year", 
-                      "Branch", "Rank", "Counseling Round", "Distance (km)"
-                  ].map(header => (
-                    <th key={header} className="px-6 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider">
-                      {header}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-100">
+          <>
+            {/* MOBILE CARD VIEW */}
+            <div className="grid grid-cols-1 gap-4 md:hidden mt-4">
                 {approvedApplications.map((app, index) => (
-                  <motion.tr 
-                      key={app.applicationNumber} 
-                      variants={rowVariants}
-                      initial="initial"
-                      animate="animate"
-                      transition={{ delay: index * 0.03 }} // Faster stagger
-                      className="hover:bg-indigo-50 transition-colors"
-                  >
-                    {/* ⭐ RESPONSIVENESS: Added 'text-sm' for mobile density */}
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">{app.name}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-indigo-700 font-mono">{app.applicationNumber}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{app.email}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{app.dob}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{app.year}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{app.branch}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-red-600 font-semibold">{app.rank}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{app.counselingRound}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-medium">{app.distance}</td>
-                  </motion.tr>
+                    <motion.div
+                        key={`mobile-${app.applicationNumber}`}
+                        variants={rowVariants}
+                        initial="initial"
+                        animate="animate"
+                        transition={{ delay: index * 0.05 }}
+                        className="bg-white p-5 rounded-xl shadow-md border border-gray-200"
+                    >
+                        <div className="flex justify-between items-start mb-3">
+                            <div>
+                                <h3 className="text-lg font-bold text-gray-900">{app.name}</h3>
+                                <p className="text-xs text-gray-500 font-mono">{app.applicationNumber}</p>
+                            </div>
+                            <span className="text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full font-bold">
+                                Rank: {app.rank}
+                            </span>
+                        </div>
+                        
+                        <div className="space-y-2 text-sm text-gray-700 border-t border-gray-100 pt-3">
+                             <div className="grid grid-cols-2 gap-2">
+                                <div>
+                                    <span className="text-xs text-gray-500 block">Branch</span>
+                                    <span className="font-medium">{app.branch}</span>
+                                </div>
+                                <div>
+                                    <span className="text-xs text-gray-500 block">Year</span>
+                                    <span className="font-medium">{app.year}</span>
+                                </div>
+                                <div>
+                                    <span className="text-xs text-gray-500 block">Distance</span>
+                                    <span className="font-medium">{app.distance} km</span>
+                                </div>
+                                <div>
+                                    <span className="text-xs text-gray-500 block">Round</span>
+                                    <span className="font-medium">{app.counselingRound}</span>
+                                </div>
+                             </div>
+                             <div className="pt-2">
+                                <span className="text-xs text-gray-500 block">Email</span>
+                                <span className="text-indigo-600 break-all">{app.email}</span>
+                             </div>
+                        </div>
+                    </motion.div>
                 ))}
-              </tbody>
-            </table>
-          </div>
+            </div>
+
+            {/* DESKTOP TABLE VIEW */}
+            <div className="hidden md:block overflow-x-auto shadow-2xl rounded-xl mt-4 border border-gray-100">
+                <table className="min-w-full divide-y divide-indigo-200"> 
+                {/* ⭐ ENHANCEMENT: Table Header Styling */}
+                <thead className="bg-indigo-600">
+                    <tr>
+                    {[
+                        "Name", "Application Number", "Email", "DOB", "Year", 
+                        "Branch", "Rank", "Counseling Round", "Distance (km)"
+                    ].map(header => (
+                        <th key={header} className="px-6 py-3 text-left text-xs font-semibold text-white uppercase tracking-wider">
+                        {header}
+                        </th>
+                    ))}
+                    </tr>
+                </thead>
+                <tbody className="bg-white divide-y divide-gray-100">
+                    {approvedApplications.map((app, index) => (
+                    <motion.tr 
+                        key={app.applicationNumber} 
+                        variants={rowVariants}
+                        initial="initial"
+                        animate="animate"
+                        transition={{ delay: index * 0.03 }} // Faster stagger
+                        className="hover:bg-indigo-50 transition-colors"
+                    >
+                        {/* ⭐ RESPONSIVENESS: Added 'text-sm' for mobile density */}
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-medium">{app.name}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-indigo-700 font-mono">{app.applicationNumber}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{app.email}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{app.dob}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{app.year}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{app.branch}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-red-600 font-semibold">{app.rank}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{app.counselingRound}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 font-medium">{app.distance}</td>
+                    </motion.tr>
+                    ))}
+                </tbody>
+                </table>
+            </div>
+          </>
         )}
       </motion.div>
     </motion.div>

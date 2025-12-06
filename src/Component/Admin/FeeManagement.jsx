@@ -76,8 +76,98 @@ const FeeManagement = () => {
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
             <h2 className="text-3xl font-extrabold text-indigo-700">Fee Management Portal</h2>
             
-            {/* ⭐ RESPONSIVENESS: Overflow-x-auto for horizontal scrolling on small screens */}
-            <div className="overflow-x-auto shadow-2xl rounded-xl border border-gray-100">
+            {/* ⭐ RESPONSIVENESS: Mobile Card Layout */}
+            <div className="grid grid-cols-1 gap-6 md:hidden">
+                {feeRecords.map(record => {
+                    const formattedDueDate = record.feeDueDate 
+                        ? new Date(record.feeDueDate).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' }) 
+                        : 'N/A';
+                    
+                    const isOverdue = (record.feeStatus !== 'Paid') && record.feeDueDate && new Date(record.feeDueDate) < new Date();
+                    
+                    const statusColor = record.feeStatus === 'Paid' 
+                        ? 'bg-green-100 text-green-800' 
+                        : isOverdue 
+                        ? 'bg-red-600 text-white font-bold' 
+                        : 'bg-yellow-100 text-yellow-800';
+
+                    return (
+                        <motion.div
+                            key={`mobile-${record.applicationNumber}`}
+                            className="bg-white p-5 rounded-xl shadow-md border border-gray-100 flex flex-col space-y-4"
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                        >
+                            <div className="flex justify-between items-start">
+                                <div>
+                                    <h3 className="text-lg font-bold text-gray-900">{record.name}</h3>
+                                    <p className="text-xs text-indigo-600 font-mono">{record.applicationNumber}</p>
+                                </div>
+                                <span className={`px-2 py-1 text-xs rounded-full border ${statusColor}`}>
+                                    {record.feeStatus || (isOverdue ? 'OVERDUE' : 'Pending')}
+                                </span>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4 text-sm border-t border-b border-gray-50 py-3">
+                                <div>
+                                    <span className="text-xs text-gray-500 block">Room</span>
+                                    <span className="font-semibold">{record.roomAllotted || 'N/A'}</span>
+                                </div>
+                                <div>
+                                    <span className="text-xs text-gray-500 block">Fee / Month</span>
+                                    <span className="font-semibold">₹{record.messFeePerMonth || '3500'}</span>
+                                </div>
+                                <div className="col-span-2">
+                                    <span className="text-xs text-gray-500 block">Total Due</span>
+                                    <span className="text-xl font-extrabold text-red-600">
+                                        ₹{record.feeAmountDue ? record.feeAmountDue.toLocaleString('en-IN', { maximumFractionDigits: 0 }) : '0'}
+                                    </span>
+                                </div>
+                                <div>
+                                    <span className="text-xs text-gray-500 block">Due Date</span>
+                                    <span className={`font-medium ${isOverdue ? 'text-red-600' : ''}`}>{formattedDueDate}</span>
+                                </div>
+                             </div>
+
+                             {/* Editable Months Due Section */}
+                            <div className="bg-gray-50 p-3 rounded-lg flex items-center justify-between">
+                                <span className="text-xs font-bold text-gray-700 uppercase">Months Due:</span>
+                                {editingApp === record.applicationNumber ? (
+                                    <div className="flex items-center space-x-2">
+                                        <input
+                                            type="number"
+                                            min="0"
+                                            value={newMonthsDue}
+                                            onChange={(e) => setNewMonthsDue(parseInt(e.target.value) || 0)}
+                                            className="w-16 border border-indigo-300 rounded text-center p-1 text-sm focus:ring-2 focus:ring-indigo-500"
+                                        />
+                                        <button onClick={() => handleSaveMonthsDue(record)} className="text-green-600 font-bold text-xs p-1 border border-green-200 rounded bg-white">Save</button>
+                                        <button onClick={() => setEditingApp(null)} className="text-gray-500 font-bold text-xs p-1 border border-gray-200 rounded bg-white">X</button>
+                                    </div>
+                                ) : (
+                                    <div className="flex items-center cursor-pointer" onClick={() => {
+                                        setEditingApp(record.applicationNumber);
+                                        setNewMonthsDue(record.monthsDue || 0);
+                                    }}>
+                                        <span className="text-lg font-bold text-indigo-700 mr-2">{record.monthsDue || 0}</span>
+                                        <span className="text-xs text-indigo-400 underline">Edit</span>
+                                    </div>
+                                )}
+                            </div>
+
+                            <button 
+                                onClick={() => handleToggleStatus(record.applicationNumber, record.feeStatus)}
+                                className={`w-full py-2.5 rounded-lg text-white font-semibold shadow-sm transition-colors ${record.feeStatus === 'Paid' ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'}`}
+                            >
+                                {record.feeStatus === 'Paid' ? 'Mark as Pending' : 'Mark as Paid'}
+                            </button>
+                        </motion.div>
+                    );
+                })}
+            </div>
+
+            {/* ⭐ RESPONSIVENESS: Desktop Table Layout (Visible on md+) */}
+            <div className="hidden md:block overflow-x-auto shadow-2xl rounded-xl border border-gray-100">
                 <table className="min-w-full divide-y divide-gray-200">
                     
                     {/* ⭐ ENHANCED HEADER STYLING (Indigo Theme) */}

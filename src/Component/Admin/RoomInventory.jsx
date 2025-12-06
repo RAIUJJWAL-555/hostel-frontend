@@ -251,8 +251,75 @@ const RoomInventory = () => {
           )}
 
           {!loading && rooms.length > 0 && (
-            // ⭐ RESPONSIVENESS: overflow-x-auto for table scrolling
-            <div className="overflow-x-auto">
+            <>
+            {/* ⭐ RESPONSIVENESS: Mobile Card Layout */}
+            <div className="grid grid-cols-1 gap-4 md:hidden p-4">
+                {rooms.map((room) => (
+                    <motion.div 
+                        key={`mobile-${room._id}`} 
+                        className="bg-white p-5 rounded-xl shadow-md border border-gray-100 flex flex-col space-y-4"
+                        initial={{ opacity: 0, y: 10 }}
+                        animate={{ opacity: 1, y: 0 }}
+                    >
+                        <div className="flex justify-between items-center">
+                            <h3 className="text-xl font-bold text-indigo-700">Room {room.roomNumber}</h3>
+                            <span className={`px-3 py-1 text-xs font-bold rounded-full border ${getStatusClasses(room.status)}`}>
+                                {room.status}
+                            </span>
+                        </div>
+                        
+                        <div className="grid grid-cols-2 gap-4 text-sm text-gray-700 border-t border-b border-gray-50 py-3">
+                            <div>
+                                <span className="text-xs text-gray-500 block">Type</span>
+                                <span className="font-semibold">{room.type}</span>
+                            </div>
+                            <div>
+                                <span className="text-xs text-gray-500 block">Capacity</span>
+                                <span className="font-semibold">{room.capacity} Beds</span>
+                            </div>
+                            <div className="col-span-2">
+                                <span className="text-xs text-gray-500 block mb-1">Occupancy</span>
+                                <div className="w-full bg-gray-200 rounded-full h-2.5">
+                                    <div 
+                                        className="bg-indigo-600 h-2.5 rounded-full" 
+                                        style={{ width: `${(room.occupiedCount / room.capacity) * 100}%` }}
+                                    ></div>
+                                </div>
+                                <div className="text-right text-xs mt-1 font-bold text-indigo-600">
+                                    {room.occupiedCount || 0} / {room.capacity} Occupied
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="flex items-center space-x-3">
+                            <div className="flex-1">
+                                <label className="text-xs text-gray-500 block mb-1">Update Status</label>
+                                <select
+                                    value={room.status}
+                                    onChange={(e) => handleStatusChange(room._id, e.target.value)}
+                                    className="w-full p-2 text-sm border border-gray-300 rounded-lg bg-gray-50 focus:ring-2 focus:ring-indigo-500"
+                                    disabled={loading}
+                                >
+                                    {roomStatuses.map(status => (
+                                        <option key={status} value={status}>{status}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            <button
+                                onClick={() => handleDeleteRoom(room._id)}
+                                className="p-2 mt-4 text-red-500 bg-red-50 rounded-lg hover:bg-red-100 transition-colors disabled:opacity-50"
+                                disabled={loading || room.occupiedCount > 0}
+                                title={room.occupiedCount > 0 ? "Cannot delete occupied room" : "Delete Room"}
+                            >
+                                <Trash2 className="w-5 h-5"/>
+                            </button>
+                        </div>
+                    </motion.div>
+                ))}
+            </div>
+
+            {/* ⭐ RESPONSIVENESS: Desktop Table Layout */}
+            <div className="hidden md:block overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                 
                 {/* ⭐ ENHANCED TABLE HEADER */}
@@ -316,6 +383,7 @@ const RoomInventory = () => {
                 </tbody>
                 </table>
             </div>
+            </>
           )}
         </motion.div>
       </div>

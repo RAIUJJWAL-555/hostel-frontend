@@ -177,8 +177,57 @@ const RoomAllotment = () => {
           </AnimatePresence>
 
           {!loading && pendingAllotment.length > 0 && (
-            // ⭐ RESPONSIVENESS: Overflow-x-auto for table scrolling
-            <div className="overflow-x-auto">
+            <>
+            {/* ⭐ RESPONSIVENESS: Mobile Card Layout for Pending Allotment */}
+            <div className="grid grid-cols-1 gap-6 md:hidden p-4">
+                {pendingAllotment.map((app) => (
+                    <motion.div 
+                        key={`mobile-${app._id}`}
+                        className="bg-white p-5 rounded-xl shadow-md border border-gray-100 flex flex-col space-y-4"
+                        variants={itemVariants}
+                    >
+                        <div className="flex justify-between items-start">
+                            <div>
+                                <h3 className="text-lg font-bold text-gray-900">{app.name}</h3>
+                                <div className="text-xs font-bold text-red-600">Rank: {app.rank}</div>
+                            </div>
+                            <span className="text-xs font-mono text-indigo-600 bg-indigo-50 px-2 py-1 rounded">
+                                {app.applicationNumber}
+                            </span>
+                        </div>
+
+                        <div className="space-y-2">
+                             <label className="text-sm font-medium text-gray-700 block">Select Room to Allot</label>
+                             <select
+                                value={selectedRoom[app.applicationNumber] || ''}
+                                onChange={(e) => handleRoomSelect(app.applicationNumber, e.target.value)}
+                                className="w-full p-2 text-sm border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-indigo-500"
+                                disabled={loading}
+                            >
+                                <option value="" disabled>-- Select Room --</option>
+                                {rooms.map(room => (
+                                    <option key={room._id} value={room.roomNumber}>
+                                        {room.roomNumber} ({room.type})
+                                    </option>
+                                ))}
+                                {rooms.length === 0 && <option value="" disabled>No Available Rooms</option>}
+                            </select>
+                        </div>
+
+                        <motion.button
+                            onClick={() => handleAllotRoom(app.applicationNumber)}
+                            className="w-full bg-green-600 text-white py-2.5 rounded-xl font-bold shadow-md hover:bg-green-700 transition disabled:opacity-50 disabled:bg-gray-400"
+                            disabled={loading || !selectedRoom[app.applicationNumber]}
+                            whileTap={{ scale: 0.98 }}
+                        >
+                            Confirm Allotment
+                        </motion.button>
+                    </motion.div>
+                ))}
+            </div>
+
+            {/* ⭐ RESPONSIVENESS: Desktop Table Layout */}
+            <div className="hidden md:block overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                 <thead className="bg-indigo-50">
                     <tr>
@@ -243,6 +292,7 @@ const RoomAllotment = () => {
                 </motion.tbody>
                 </table>
             </div>
+            </>
           )}
         </motion.div>
         

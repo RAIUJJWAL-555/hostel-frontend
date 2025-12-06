@@ -163,79 +163,139 @@ const PendingApplications = () => {
       ) : pendingApplications.length === 0 ? (
         <p className="text-gray-500 p-8 border border-gray-200 bg-gray-50 rounded-xl text-center">🎉 All pending applications have been processed. Great work!</p>
       ) : (
-        /* ⭐ RESPONSIVENESS: overflow-x-auto for table scrolling on mobile */
-        <div className="overflow-x-auto shadow-2xl rounded-xl border border-gray-100"> 
-          <table className="min-w-full divide-y divide-gray-200">
-            
-            {/* ⭐ ENHANCEMENT: Table Header Styling (Indigo Theme) */}
-            <thead className="bg-indigo-600">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">Name</th>
-                <th className="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">App No</th>
-                <th className="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">Rank</th>
-                <th className="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">Distance (km)</th>
-                <th className="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">Branch / Year</th>
-                <th className="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">Email</th>
-                <th className="px-6 py-3 text-center text-xs font-bold text-white uppercase tracking-wider">Action</th>
-              </tr>
-            </thead>
-            
-            <motion.tbody 
-              className="bg-white divide-y divide-gray-100"
-              initial="hidden"
-              animate="visible"
-              variants={{ visible: { transition: { staggerChildren: 0.04 } } }}
-            >
-              {pendingApplications.map((app, index) => {
-                
-                // Highlight rows with the highest distance for review
-                const isHighPriority = index < 3 && sortType === 'high-low';
-                
-                return (
-                  <motion.tr 
-                    key={app.applicationNumber} 
-                    variants={rowVariants} 
-                    // ⭐ ENHANCEMENT: Hover and Priority Row Styling
-                    className={`hover:bg-indigo-50 transition-colors ${isHighPriority ? 'bg-yellow-50 border-l-4 border-yellow-400' : ''}`}
-                  >
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{app.name}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-indigo-700 font-mono">{app.applicationNumber}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-red-600 font-semibold">{app.rank}</td>
-                    
-                    {/* Highlight Distance for Relevance */}
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-extrabold text-green-700">
-                        {app.distance} km
-                    </td>
-                    
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
-                        {app.branch} ({app.year})
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{app.email}</td>
+        <>
+            {/* DUPLICATE VIEW: Mobile Cards (Visible only on mobile) */}
+            <div className="grid grid-cols-1 gap-6 md:hidden">
+                {pendingApplications.map((app, index) => {
+                    const isHighPriority = index < 3 && sortType === 'high-low';
+                    return (
+                        <motion.div 
+                            key={`mobile-${app.applicationNumber}`}
+                            className={`bg-white p-5 rounded-xl shadow-md border border-gray-100 flex flex-col space-y-4 ${isHighPriority ? 'border-l-4 border-l-yellow-400' : ''}`}
+                            variants={itemVariants}
+                            initial="hidden"
+                            animate="visible"
+                        >
+                            <div className="flex justify-between items-start">
+                                <div>
+                                    <h3 className="text-lg font-bold text-gray-900">{app.name}</h3>
+                                    <p className="text-xs text-gray-500">{app.email}</p>
+                                </div>
+                                <span className="text-sm font-mono text-indigo-700 font-bold bg-indigo-50 px-2 py-1 rounded">
+                                    {app.applicationNumber}
+                                </span>
+                            </div>
 
-                    {/* Action Column */}
-                    <td className="px-6 py-4 whitespace-nowrap space-x-2 text-center text-xs md:text-sm">
-                      <motion.button
-                        onClick={() => handleApprove(app.applicationNumber)}
-                        // ⭐ ENHANCEMENT: Button Styling
-                        className="bg-green-600 text-white px-3 py-1.5 rounded-lg font-semibold shadow-md hover:bg-green-700 transition"
-                        whileHover={{ scale: 1.05 }}
-                      >
-                        Approve
-                      </motion.button>
-                      <motion.button
-                        onClick={() => handleReject(app.applicationNumber)}
-                        className="bg-red-600 text-white px-3 py-1.5 rounded-lg font-semibold shadow-md hover:bg-red-700 transition mt-2 md:mt-0"
-                        whileHover={{ scale: 1.05 }}
-                      >
-                        Reject
-                      </motion.button>
-                    </td>
-                  </motion.tr>
-                );
-              })}
-            </motion.tbody>
-          </table>
-        </div>
+                            <div className="grid grid-cols-2 gap-y-2 text-sm text-gray-700">
+                                <div>
+                                    <span className="block text-xs text-gray-500">Rank</span>
+                                    <span className="font-semibold text-red-600">{app.rank}</span>
+                                </div>
+                                <div>
+                                    <span className="block text-xs text-gray-500">Distance</span>
+                                    <span className="font-extrabold text-green-700">{app.distance} km</span>
+                                </div>
+                                <div className="col-span-2">
+                                    <span className="block text-xs text-gray-500">Branch / Year</span>
+                                    <span className="font-medium">{app.branch} ({app.year})</span>
+                                </div>
+                            </div>
+
+                            <div className="flex space-x-3 pt-2">
+                                <motion.button
+                                    onClick={() => handleApprove(app.applicationNumber)}
+                                    className="flex-1 bg-green-600 text-white py-2 rounded-lg font-semibold shadow-sm text-sm"
+                                    whileTap={{ scale: 0.95 }}
+                                >
+                                    Approve
+                                </motion.button>
+                                <motion.button
+                                    onClick={() => handleReject(app.applicationNumber)}
+                                    className="flex-1 bg-red-600 text-white py-2 rounded-lg font-semibold shadow-sm text-sm"
+                                    whileTap={{ scale: 0.95 }}
+                                >
+                                    Reject
+                                </motion.button>
+                            </div>
+                        </motion.div>
+                    );
+                })}
+            </div>
+
+            {/* ORIGINAL TABLE: Visible only on md screens and up */}
+            <div className="hidden md:block overflow-x-auto shadow-2xl rounded-xl border border-gray-100"> 
+            <table className="min-w-full divide-y divide-gray-200">
+                
+                {/* ⭐ ENHANCEMENT: Table Header Styling (Indigo Theme) */}
+                <thead className="bg-indigo-600">
+                <tr>
+                    <th className="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">Name</th>
+                    <th className="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">App No</th>
+                    <th className="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">Rank</th>
+                    <th className="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">Distance (km)</th>
+                    <th className="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">Branch / Year</th>
+                    <th className="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">Email</th>
+                    <th className="px-6 py-3 text-center text-xs font-bold text-white uppercase tracking-wider">Action</th>
+                </tr>
+                </thead>
+                
+                <motion.tbody 
+                className="bg-white divide-y divide-gray-100"
+                initial="hidden"
+                animate="visible"
+                variants={{ visible: { transition: { staggerChildren: 0.04 } } }}
+                >
+                {pendingApplications.map((app, index) => {
+                    
+                    // Highlight rows with the highest distance for review
+                    const isHighPriority = index < 3 && sortType === 'high-low';
+                    
+                    return (
+                    <motion.tr 
+                        key={app.applicationNumber} 
+                        variants={rowVariants} 
+                        // ⭐ ENHANCEMENT: Hover and Priority Row Styling
+                        className={`hover:bg-indigo-50 transition-colors ${isHighPriority ? 'bg-yellow-50 border-l-4 border-yellow-400' : ''}`}
+                    >
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{app.name}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-indigo-700 font-mono">{app.applicationNumber}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-red-600 font-semibold">{app.rank}</td>
+                        
+                        {/* Highlight Distance for Relevance */}
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-extrabold text-green-700">
+                            {app.distance} km
+                        </td>
+                        
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                            {app.branch} ({app.year})
+                        </td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{app.email}</td>
+
+                        {/* Action Column */}
+                        <td className="px-6 py-4 whitespace-nowrap space-x-2 text-center text-xs md:text-sm">
+                        <motion.button
+                            onClick={() => handleApprove(app.applicationNumber)}
+                            // ⭐ ENHANCEMENT: Button Styling
+                            className="bg-green-600 text-white px-3 py-1.5 rounded-lg font-semibold shadow-md hover:bg-green-700 transition"
+                            whileHover={{ scale: 1.05 }}
+                        >
+                            Approve
+                        </motion.button>
+                        <motion.button
+                            onClick={() => handleReject(app.applicationNumber)}
+                            className="bg-red-600 text-white px-3 py-1.5 rounded-lg font-semibold shadow-md hover:bg-red-700 transition mt-2 md:mt-0"
+                            whileHover={{ scale: 1.05 }}
+                        >
+                            Reject
+                        </motion.button>
+                        </td>
+                    </motion.tr>
+                    );
+                })}
+                </motion.tbody>
+            </table>
+            </div>
+        </>
       )}
     </motion.div>
   );

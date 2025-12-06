@@ -13,6 +13,7 @@ import ComplaintList from "./ComplainList";
 
 import RoomInventory from "./RoomInventory"; 
 import RoomAllotment from "./RoomAllotment"; 
+import NoticeManagement from "./NoticeManagement"; 
 // ------------------------------------
 // FRAMER MOTION VARIANTS (Unchanged)
 // ------------------------------------
@@ -71,6 +72,8 @@ const AdminDashboard = () => {
             return <RoomInventory />; 
         case 'allotment':
             return <RoomAllotment />;
+        case 'notices':
+            return <NoticeManagement />;
         default:
             return <PendingApplications />;
     }
