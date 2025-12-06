@@ -57,9 +57,9 @@ const ProfileCard = ({ studentData }) => {
             </div>
 
 
-            <button className="w-full py-2 mt-4 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 transition duration-200">
+            {/* <button className="w-full py-2 mt-4 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 transition duration-200">
                 Edit Application
-            </button>
+            </button> */}
         </div>
     );
 };

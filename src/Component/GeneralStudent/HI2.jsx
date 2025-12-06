@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
+import gpg_eligibility from "../../assets/gpg_eligibility.pdf"
+import gpg_rules from "../../assets/GPG_hostel_rules.pdf"
 
 // Helper component for CSS animations
 const StyleInjector = () => (
@@ -47,14 +49,15 @@ const HostelLandingPage = () => {
   const hostel2 = "https://images.unsplash.com/photo-1512917774080-9991f1c4c750?q=80&w=2070&auto=format&fit=crop";
   
   const notifications = [
-    "SC/ST students' last day to apply for hostel extended to 25th October.",
-    "Mess fees will be accepted using cash only.",
-    "Hostel allotment list for 2nd year will be published on 22nd October.",
-    "Mandatory attendance for the upcoming cleanliness drive.",
-    "SC/ST students' last day to apply for hostel extended to 25th October.", // Duplicate for seamless loop
-    "Mess fees will be accepted using cash only.", // Duplicate for seamless loop
-    "Hostel allotment list for 2nd year will be published on 22nd October.", // Duplicate for seamless loop
-    "Mandatory attendance for the upcoming cleanliness drive.", // Duplicate for seamless loop
+    <a href="https://jeecup.admissions.nic.in/" target="_blank" rel="noopener noreferrer">For Admission (JEECUP)</a>,
+    <a href="https://scholarship.up.gov.in/index.aspx" target="_blank" rel="noopener noreferrer">For Scholarship</a>,
+    <a href="https://gpglibrary2020.blogspot.com/" target="_blank" rel="noopener noreferrer">For Library</a>,
+    <a href="https://jeecup.admissions.nic.in/" target="_blank" rel="noopener noreferrer">For Admission (JEECUP)</a>,
+    <a href="https://scholarship.up.gov.in/index.aspx" target="_blank" rel="noopener noreferrer">For Scholarship</a>,
+    <a href="https://gpglibrary2020.blogspot.com/" target="_blank" rel="noopener noreferrer">For Library</a>,
+    <a href="https://jeecup.admissions.nic.in/" target="_blank" rel="noopener noreferrer">For Admission (JEECUP)</a>,
+    <a href="https://scholarship.up.gov.in/index.aspx" target="_blank" rel="noopener noreferrer">For Scholarship</a>,
+    <a href="https://gpglibrary2020.blogspot.com/" target="_blank" rel="noopener noreferrer">For Library</a>,
   ];
 
   return (
@@ -110,11 +113,11 @@ const HostelLandingPage = () => {
               <div className={`w-full md:w-1/2 bg-red-600 text-white rounded-2xl shadow-xl p-6 transition-all duration-1000 delay-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
                 <h2 className="text-xl font-bold bg-red-700 text-white py-4 px-6 text-center -m-6 rounded-t-2xl mb-6">Important Links</h2>
                 <div className="flex flex-col gap-4">
-                  <a href="#" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 bg-white text-red-700 py-3 px-5 rounded-full font-semibold hover:bg-red-100 transition-all duration-300 transform hover:scale-105">
+                  <a href={gpg_rules} download="GPG_Hostel_Rules.pdf" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 bg-white text-red-700 py-3 px-5 rounded-full font-semibold hover:bg-red-100 transition-all duration-300 transform hover:scale-105">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                     Download Rules & Regulations
                   </a>
-                  <a href="#" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 bg-white text-red-700 py-3 px-5 rounded-full font-semibold hover:bg-red-100 transition-all duration-300 transform hover:scale-105">
+                  <a href={gpg_eligibility} download="GPG_Eligibility_Criteria.pdf" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 bg-white text-red-700 py-3 px-5 rounded-full font-semibold hover:bg-red-100 transition-all duration-300 transform hover:scale-105">
                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>
                     Download Eligibility Criteria
                   </a>
