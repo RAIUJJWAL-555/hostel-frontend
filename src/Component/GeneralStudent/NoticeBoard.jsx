@@ -15,7 +15,7 @@ const NoticeBoard = () => {
 
   const fetchActiveNotices = async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/api/notices?activeOnly=true`);
+      const response = await fetch(`${VITE_API_URL}/api/notices?activeOnly=true`);
       if (response.ok) {
         const data = await response.json();
         setNotices(data);
