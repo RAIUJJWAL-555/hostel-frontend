@@ -1,19 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Outlet } from "react-router-dom";
 import { toast } from "react-toastify";
 import { motion, AnimatePresence } from "framer-motion"; 
 import { Menu, X } from 'lucide-react'; // For the mobile toggle icon
 
-import ApprovedStudents from "./ApprovedStudents";
-import AdminSidebar from "./AdminSidebar"; // This component needs internal updates (see below)
+import AdminSidebar from "./AdminSidebar"; 
 import AdminHeader from "./AdminHeader";
-import PendingApplications from "./PendingApplication";
-import FeeManagement from "./FeeManagement"; 
-import ComplaintList from "./ComplainList";
 
-import RoomInventory from "./RoomInventory"; 
-import RoomAllotment from "./RoomAllotment"; 
-import NoticeManagement from "./NoticeManagement"; 
 // ------------------------------------
 // FRAMER MOTION VARIANTS (Unchanged)
 // ------------------------------------
@@ -32,10 +25,11 @@ const contentContainerVariants = {
 };
 
 const AdminDashboard = () => {
-  const [activeView, setActiveView] = useState("applications"); 
   const [adminName, setAdminName] = useState("Admin"); 
   // ⭐ NEW STATE: Manages sidebar visibility on mobile
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); 
+  // ⭐ NEW STATE: Manages sidebar expansion on desktop
+  const [isSidebarExpanded, setIsSidebarExpanded] = useState(true);
   const navigate = useNavigate();
 
   const handleLogout = () => {
@@ -58,42 +52,20 @@ const AdminDashboard = () => {
     }
   }, []);
 
-  const renderView = () => {
-    switch (activeView) {
-        case 'applications':
-            return <PendingApplications />; 
-        case 'complaints':
-            return <ComplaintList />;
-        case 'approved':
-            return <ApprovedStudents />;
-        case 'fees':
-            return <FeeManagement />;
-        case 'inventory': 
-            return <RoomInventory />; 
-        case 'allotment':
-            return <RoomAllotment />;
-        case 'notices':
-            return <NoticeManagement />;
-        default:
-            return <PendingApplications />;
-    }
-  }
-
   return (
     <div className="flex min-h-screen bg-white">
         
       {/* 1. Sidebar Component (Pass state control props) */}
       <AdminSidebar 
         onLogout={handleLogout} 
-        currentView={activeView}
-        onNavigate={(view) => {
-            setActiveView(view);
-            // Close sidebar automatically after navigation on mobile
-            setIsSidebarOpen(false); 
-        }}
         // ⭐ PROP FOR RESPONSIVENESS
         isMobileOpen={isSidebarOpen}
         onClose={() => setIsSidebarOpen(false)}
+        // ⭐ PROP FOR DESKTOP EXPANSION
+        isExpanded={isSidebarExpanded}
+        onToggleExpand={() => setIsSidebarExpanded(!isSidebarExpanded)}
+        // ⭐ NEW PROP: Pass Admin Name
+        adminName={adminName}
       /> 
       
       {/* 2. Mobile Sidebar Toggle Button */}
@@ -110,7 +82,7 @@ const AdminDashboard = () => {
       <div 
         // ⭐ RESPONSIVE PADDING: Full width on mobile, shifted right on desktop
         // pl-12 is added for mobile to give space for the toggle button
-        className="flex-grow p-4 pl-12 lg:p-8 lg:pl-[280px] transition-all duration-300 bg-gray-50"
+        className={`flex-grow p-4 pl-12 lg:p-8 transition-all duration-300 bg-gray-50 ${isSidebarExpanded ? 'lg:pl-[280px]' : 'lg:pl-[80px]'}`}
       >
         <AdminHeader userName={adminName}/>
 
@@ -134,21 +106,13 @@ const AdminDashboard = () => {
           initial="hidden"
           animate="visible"
         >
-          <AnimatePresence mode="wait"> 
-              <motion.div
-                  key={activeView}
-                  initial={{ opacity: 0, x: activeView === 'applications' ? 20 : -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: activeView === 'applications' ? -20 : 20 }}
-                  transition={{ duration: 0.3 }}
-              >
-                  {renderView()}
-              </motion.div>
-          </AnimatePresence>
+          {/* Render child routes here */}
+          <Outlet />
         </motion.div>
       </div>
     </div>
   );
 };
+
 
 export default AdminDashboard;

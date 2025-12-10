@@ -63,7 +63,7 @@ const HostelLandingPage = () => {
   return (
     <>
       <StyleInjector />
-      <div ref={sectionRef} className="bg-gray-50 overflow-x-hidden p-4 sm:p-6 lg:p-8">
+      <div ref={sectionRef} className="bg-gray-50 dark:bg-slate-900 overflow-x-hidden p-4 sm:p-6 lg:p-8 transition-colors duration-300">
         <div className="flex flex-col gap-12">
           
           {/* --- Main Content Section --- */}
@@ -81,13 +81,13 @@ const HostelLandingPage = () => {
                   <p className="absolute bottom-4 left-4 text-white text-lg font-semibold">Secure & Modern Facilities</p>
                 </div>
               </div>
-              <div className={`bg-white border border-cyan-100 w-full lg:w-1/2 flex flex-col justify-center p-6 sm:p-10 rounded-2xl shadow-xl transition-all duration-1000 ease-in-out ${isVisible ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'}`}>
-                <h1 className={`text-2xl sm:text-3xl md:text-4xl font-extrabold text-cyan-800 transition-all duration-700 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>Welcome to GPG Hostel</h1>
-                <div className={`mt-5 text-gray-700 space-y-5 text-justify transition-all duration-700 delay-400 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+              <div className={`bg-white dark:bg-slate-800 border border-cyan-100 dark:border-slate-700 w-full lg:w-1/2 flex flex-col justify-center p-6 sm:p-10 rounded-2xl shadow-xl transition-all duration-1000 ease-in-out ${isVisible ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'}`}>
+                <h1 className={`text-2xl sm:text-3xl md:text-4xl font-extrabold text-cyan-800 dark:text-cyan-400 transition-all duration-700 delay-200 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>Welcome to GPG Hostel</h1>
+                <div className={`mt-5 text-gray-700 dark:text-slate-300 space-y-5 text-justify transition-all duration-700 delay-400 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
                   <p className="font-serif text-base sm:text-lg leading-relaxed">A warm greeting from Government Polytechnic, Ghaziabad! We welcome you to our vibrant campus, where learning meets comfort and growth.</p>
                   <p className="font-serif text-base sm:text-lg leading-relaxed">Our hostel is a second home, providing a safe, comfortable, and well-managed environment. It's a place to forge friendships, create memories, and focus on your academic journey.</p>
                 </div>
-                <p className={`mt-8 font-bold text-cyan-700 self-end transition-all duration-700 delay-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>THANK YOU!!</p>
+                <p className={`mt-8 font-bold text-cyan-700 dark:text-cyan-500 self-end transition-all duration-700 delay-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>THANK YOU!!</p>
               </div>
             </div>
           </div>
@@ -96,13 +96,13 @@ const HostelLandingPage = () => {
           <div className="w-full max-w-4xl mx-auto">
             <div className="flex flex-col md:flex-row gap-8">
               {/* Notifications Card */}
-              <div className={`w-full md:w-1/2 bg-white rounded-2xl shadow-xl overflow-hidden transition-all duration-1000 delay-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-                <h2 className="text-xl font-bold bg-cyan-800 text-white py-4 px-6 text-center">Notifications</h2>
+              <div className={`w-full md:w-1/2 bg-white dark:bg-slate-800 rounded-2xl shadow-xl overflow-hidden transition-all duration-1000 delay-500 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+                <h2 className="text-xl font-bold bg-cyan-800 dark:bg-cyan-900 text-white py-4 px-6 text-center">Notifications</h2>
                 <div className="h-48 overflow-hidden relative">
                   <div className="absolute top-0 left-0 w-full animate-scroll-up">
-                    <ul className="text-gray-700">
+                    <ul className="text-gray-700 dark:text-slate-300">
                       {notifications.map((note, index) => (
-                        <li key={index} className="py-3 px-6 border-b border-gray-200">{note}</li>
+                        <li key={index} className="py-3 px-6 border-b border-gray-200 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors">{note}</li>
                       ))}
                     </ul>
                   </div>
@@ -110,14 +110,14 @@ const HostelLandingPage = () => {
               </div>
 
               {/* Important Links Card */}
-              <div className={`w-full md:w-1/2 bg-red-600 text-white rounded-2xl shadow-xl p-6 transition-all duration-1000 delay-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
-                <h2 className="text-xl font-bold bg-red-700 text-white py-4 px-6 text-center -m-6 rounded-t-2xl mb-6">Important Links</h2>
+              <div className={`w-full md:w-1/2 bg-red-600 dark:bg-red-800 text-white rounded-2xl shadow-xl p-6 transition-all duration-1000 delay-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+                <h2 className="text-xl font-bold bg-red-700 dark:bg-red-900 text-white py-4 px-6 text-center -m-6 rounded-t-2xl mb-6">Important Links</h2>
                 <div className="flex flex-col gap-4">
-                  <a href={gpg_rules} download="GPG_Hostel_Rules.pdf" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 bg-white text-red-700 py-3 px-5 rounded-full font-semibold hover:bg-red-100 transition-all duration-300 transform hover:scale-105">
+                  <a href={gpg_rules} download="GPG_Hostel_Rules.pdf" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 bg-white dark:bg-slate-200 text-red-700 dark:text-red-900 py-3 px-5 rounded-full font-semibold hover:bg-red-100 dark:hover:bg-white transition-all duration-300 transform hover:scale-105">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
                     Download Rules & Regulations
                   </a>
-                  <a href={gpg_eligibility} download="GPG_Eligibility_Criteria.pdf" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 bg-white text-red-700 py-3 px-5 rounded-full font-semibold hover:bg-red-100 transition-all duration-300 transform hover:scale-105">
+                  <a href={gpg_eligibility} download="GPG_Eligibility_Criteria.pdf" target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 bg-white dark:bg-slate-200 text-red-700 dark:text-red-900 py-3 px-5 rounded-full font-semibold hover:bg-red-100 dark:hover:bg-white transition-all duration-300 transform hover:scale-105">
                      <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" /></svg>
                     Download Eligibility Criteria
                   </a>

@@ -37,14 +37,14 @@ const NoticeBoard = () => {
   if (notices.length === 0 || !isOpen) return null;
 
   return (
-    <div className="w-full bg-cyan-500 overflow-hidden relative border-b border-indigo-700 shadow-md">
+    <div className="w-full bg-slate-950/90 backdrop-blur-md overflow-hidden relative border-b border-indigo-500/30 shadow-lg z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-between">
         
         <div className="flex items-center flex-1 mr-4 overflow-hidden">
-          <div className="flex-shrink-0 bg-indigo-700 p-1.5 rounded-full mr-3 animate-pulse">
-            <Bell size={18} className="text-yellow-300" />
+          <div className="flex-shrink-0 bg-indigo-500/20 p-1.5 rounded-full mr-3 animate-pulse">
+            <Bell size={18} className="text-indigo-400" />
           </div>
-          <span className="text-indigo-200 font-semibold mr-2 text-sm uppercase tracking-wider hidden sm:block">Announcement:</span>
+          <span className="text-indigo-400 font-bold mr-2 text-xs md:text-sm uppercase tracking-wider hidden sm:block border-r border-slate-700 pr-2">Announcement</span>
           
           <div className="flex-1 relative h-6 overflow-hidden">
              <AnimatePresence mode="wait">
@@ -56,8 +56,8 @@ const NoticeBoard = () => {
                     transition={{ duration: 0.5 }}
                     className="absolute w-full"
                 >
-                    <p className="text-white font-medium truncate">
-                        <span className="font-bold text-yellow-300 mr-2">{notices[currentNoticeIndex]?.title}:</span>
+                    <p className="text-slate-300 font-medium truncate text-sm md:text-base">
+                        <span className="font-semibold text-white mr-2">{notices[currentNoticeIndex]?.title}:</span>
                         {notices[currentNoticeIndex]?.content}
                     </p>
                 </motion.div>
@@ -67,7 +67,7 @@ const NoticeBoard = () => {
 
         <button 
             onClick={() => setIsOpen(false)}
-            className="text-indigo-300 hover:text-white transition-colors p-1 rounded-md hover:bg-indigo-800"
+            className="text-slate-500 hover:text-indigo-400 transition-colors p-1 rounded-full hover:bg-slate-800"
             aria-label="Close Announcement"
         >
             <X size={18} />

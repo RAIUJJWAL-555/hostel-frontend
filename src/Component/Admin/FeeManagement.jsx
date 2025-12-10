@@ -157,9 +157,10 @@ const FeeManagement = () => {
 
                             <button 
                                 onClick={() => handleToggleStatus(record.applicationNumber, record.feeStatus)}
-                                className={`w-full py-2.5 rounded-lg text-white font-semibold shadow-sm transition-colors ${record.feeStatus === 'Paid' ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'}`}
+                                disabled={record.feeStatus === 'Paid'}
+                                className={`w-full py-2.5 rounded-lg text-white font-semibold shadow-sm transition-colors ${record.feeStatus === 'Paid' ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-500 hover:bg-green-600'}`}
                             >
-                                {record.feeStatus === 'Paid' ? 'Mark as Pending' : 'Mark as Paid'}
+                                {record.feeStatus === 'Paid' ? 'Paid' : 'Mark as Paid'}
                             </button>
                         </motion.div>
                     );
@@ -268,9 +269,10 @@ const FeeManagement = () => {
                                     <td className="px-6 py-4 whitespace-nowrap">
                                         <button 
                                             onClick={() => handleToggleStatus(record.applicationNumber, record.feeStatus)}
-                                            className={`px-3 py-1 text-xs rounded-lg text-white font-medium transition shadow-md w-full max-w-[120px] ${record.feeStatus === 'Paid' ? 'bg-red-500 hover:bg-red-600' : 'bg-green-500 hover:bg-green-600'}`}
+                                            disabled={record.feeStatus === 'Paid'}
+                                            className={`px-3 py-1 text-xs rounded-lg text-white font-medium transition shadow-md w-full max-w-[120px] ${record.feeStatus === 'Paid' ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-500 hover:bg-green-600'}`}
                                         >
-                                            {record.feeStatus === 'Paid' ? 'Mark Pending' : 'Mark Paid'}
+                                            {record.feeStatus === 'Paid' ? 'Paid' : 'Mark Paid'}
                                         </button>
                                     </td>
                                 </motion.tr>

@@ -14,10 +14,18 @@ import RoomInventory from './Component/Admin/RoomInventory';
 import RoomAllotment from './Component/Admin/RoomAllotment';
 import Dashboard from './Component/Student/Dashboard';
 import FeeManagement from './Component/Admin/FeeManagement';
+import PendingApplications from './Component/Admin/PendingApplication';
+import ApprovedStudents from './Component/Admin/ApprovedStudents';
+import ComplaintList from './Component/Admin/ComplainList';
+import NoticeManagement from './Component/Admin/NoticeManagement';
+import StudentMainView from './Component/Student/StudentMainView';
+import ComplaintBoxWrapper from './Component/Student/ComplaintBoxWrapper';
+import { ThemeProvider } from './context/ThemeContext';
+import FloatingThemeToggle from './Component/FloatingThemeToggle';
 
 const App = () => {
   return (
-    <>
+    <ThemeProvider>
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/admin/staff" element={<Administration />} />
@@ -25,44 +33,34 @@ const App = () => {
         <Route path="/register/admin" element={<AdminRegistrationForm/>} />
         <Route path="/register/student" element={<StudentRagister />} />
         <Route path="/login" element={<LoginForm />} />
-        <Route
-          path="/admin/dashboard"
-          element={
-            <ProtectedRoute allowedRole="admin">
-              <AdminDashboard />
-            </ProtectedRoute>
-          }
-        />
-       <Route path="/admin/dashboard/approved" element={
-  <ProtectedRoute allowedRole="admin">
-    <AdminDashboard />
-  </ProtectedRoute>
-} />
-{/* <Route path="/admin/dashboard/fee" element={
-  <ProtectedRoute allowedRole="admin">
-    <FeeManagement/>
-  </ProtectedRoute>
-} /> */}
-
+        <Route path="/admin/dashboard" element={
+          <ProtectedRoute allowedRole="admin">
+            <AdminDashboard />
+          </ProtectedRoute>
+        }>
+          <Route index element={<PendingApplications />} />
+          <Route path="applications" element={<PendingApplications />} />
+          <Route path="approved" element={<ApprovedStudents />} />
+          <Route path="complaints" element={<ComplaintList />} />
+          <Route path="fees" element={<FeeManagement />} />
+          <Route path="inventory" element={<RoomInventory />} />
+          <Route path="allotment" element={<RoomAllotment />} />
+          <Route path="notices" element={<NoticeManagement />} />
+          <Route path="register" element={<AdminRegistrationForm />} />
+        </Route>
       
-        <Route path='/admin/dashboard/room' element={
-          <ProtectedRoute allowedRole="admin">
-            <RoomInventory/>
-          </ProtectedRoute>
-        } />
-        <Route path='/admin/dashboard/room/allot' element={
-          <ProtectedRoute allowedRole="admin">
-            <RoomAllotment/>
-          </ProtectedRoute>
-        } />
         <Route path='/student/dashboard' element={
           <ProtectedRoute allowedRole="student">
             <Dashboard/>
           </ProtectedRoute>
-        } />
+        }>
+           <Route index element={<StudentMainView />} />
+           <Route path="complaint" element={<ComplaintBoxWrapper />} />
+        </Route>
       </Routes>
+      <FloatingThemeToggle />
       <ToastContainer position="top-center" autoClose={2000} />
-    </>
+    </ThemeProvider>
   );
 };
 

@@ -43,11 +43,11 @@ const StyleInjector = () => (
 
       @keyframes blink-caret {
         from, to { border-color: transparent }
-        50% { border-color: white; }
+        50% { border-color: currentColor; }
       }
       .typing-cursor::after {
         content: '';
-        border-right: 2px solid white;
+        border-right: 2px solid currentColor;
         animation: blink-caret .75s step-end infinite;
         margin-left: 4px;
       }
@@ -114,37 +114,37 @@ const Welcome = () => {
   return (
     <>
       <StyleInjector />
-      <div className='relative w-full h-screen overflow-hidden bg-gray-900 '>
+      <div className='relative w-full h-screen overflow-hidden bg-gray-100 dark:bg-slate-900 transition-colors duration-500'>
         {/* Background Image with Ken Burns Effect */}
         <div 
-          className='absolute inset-0 bg-cover bg-center animate-ken-burns' 
+          className='absolute inset-0 bg-cover bg-center animate-ken-burns opacity-90 dark:opacity-60 transition-opacity duration-500' 
           style={{ backgroundImage: "url('https://images.unsplash.com/photo-1580587771525-78b9dba3b914?q=80&w=1974&auto=format&fit=crop')" }}
         ></div>
         
         {/* Gradient Overlay */}
-        <div className='absolute inset-0 bg-gradient-to-t from-black/80 via-black/50 to-transparent'></div>
+        <div className='absolute inset-0 bg-gradient-to-t from-white/95 via-white/60 to-transparent dark:from-slate-950/95 dark:via-slate-950/60 transition-colors duration-500'></div>
         
         {/* Content */}
-        <div className='relative h-full flex flex-col items-center justify-center text-center text-white p-4 z-10 pt-[150px]'>
+        <div className='relative h-full flex flex-col items-center justify-center text-center text-slate-900 dark:text-white p-4 z-10 pt-[150px] transition-colors duration-500'>
           
-          <h1 className='text-4xl md:text-6xl font-extrabold text-white drop-shadow-lg animate-fade-in-up' style={{ textShadow: '2px 2px 8px rgba(0,0,0,0.7)' }}>
+          <h1 className='text-4xl md:text-6xl font-extrabold text-slate-900 dark:text-white drop-shadow-lg animate-fade-in-up'>
             Welcome to GPG Hostel
           </h1>
           
-          <p className='mt-4 text-lg md:text-xl max-w-2xl animate-fade-in-up animation-delay-300 typing-cursor h-7'>
+          <p className='mt-4 text-lg md:text-xl max-w-2xl animate-fade-in-up animation-delay-300 typing-cursor h-7 font-medium text-slate-700 dark:text-slate-200'>
             {typedText}
           </p>
           
           <div className='mt-8 flex flex-col sm:flex-row gap-4 animate-fade-in-up animation-delay-600'>
             <Link 
               to="/register/student" 
-              className='bg-blue-600 text-white py-3 px-8 rounded-full text-lg font-semibold shadow-lg hover:bg-blue-700 transform hover:scale-105 transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75'
+              className='bg-indigo-600 text-white py-3 px-8 rounded-full text-lg font-semibold shadow-lg hover:bg-indigo-700 transform hover:scale-105 transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-opacity-75'
             >
               Apply Now
             </Link>
             <a 
               href="#explore" 
-              className='bg-transparent border-2 border-white text-white py-3 px-8 rounded-full text-lg font-semibold shadow-lg hover:bg-white hover:text-black transform hover:scale-105 transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-75'
+              className='bg-transparent border-2 border-slate-900 text-slate-900 hover:bg-slate-900 hover:text-white dark:border-white dark:text-white dark:hover:bg-white dark:hover:text-black py-3 px-8 rounded-full text-lg font-semibold shadow-lg transform hover:scale-105 transition-all duration-300 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-opacity-75'
             >
               Explore Facilities
             </a>

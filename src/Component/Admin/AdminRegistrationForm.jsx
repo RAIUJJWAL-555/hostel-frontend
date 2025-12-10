@@ -3,13 +3,21 @@ import Header from '../GeneralStudent/Header.jsx';
 // API ke liye Base URL
 const BASE_URL = `${import.meta.env.VITE_API_URL}/api`; 
 
-// Input field ke liye component ko bahar define kiya gaya hai
-const InputField = ({ name, type, placeholder, value, onChange, icon }) => (
-    <div className="relative">
-      <span className="absolute inset-y-0 left-0 flex items-center pl-3">
+// Input field ke liye component
+const InputField = ({ name, type, placeholder, value, onChange, icon, error }) => (
+    <div className="relative group">
+      <span className="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400 dark:text-slate-500 group-focus-within:text-indigo-500 dark:group-focus-within:text-indigo-400 transition-colors duration-300">
         {icon}
       </span>
-      <input type={type} name={name} placeholder={placeholder} value={value} onChange={onChange} required className='w-full p-3 pl-10 bg-gray-800/50 text-white placeholder-gray-400 border border-gray-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-400 transition duration-300'/>
+      <input 
+        type={type} 
+        name={name} 
+        placeholder={placeholder} 
+        value={value} 
+        onChange={onChange} 
+        className={`w-full py-3.5 pl-12 pr-4 bg-slate-50 dark:bg-slate-900/50 hover:bg-slate-100 dark:hover:bg-slate-900/70 text-slate-900 dark:text-slate-100 placeholder-slate-400 dark:placeholder-slate-500 border rounded-xl shadow-inner focus:outline-none focus:ring-2 transition-all duration-300 backdrop-blur-sm ${error ? 'border-red-500/50 focus:ring-red-500/30 focus:border-red-500' : 'border-slate-200 dark:border-slate-700 focus:border-indigo-500 focus:ring-indigo-500/20'}`}
+      />
+      {error && <p className="text-red-500 dark:text-red-400 text-xs mt-1.5 ml-2 font-medium flex items-center gap-1"><span className="inline-block w-1 h-1 rounded-full bg-red-500 dark:bg-red-400"></span>{error}</p>}
     </div>
 );
 
@@ -31,6 +39,36 @@ const AdminRegistrationPage = () => {
   const [message, setMessage] = useState('');
   const [registrationEmail, setRegistrationEmail] = useState('');
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
+
+  // --- LOGIC SAME AS BEFORE ---
+  const validateForm = () => {
+    let newErrors = {};
+    if (!formData.adminId.trim()) newErrors.adminId = "Admin ID is required";
+    if (!formData.name.trim()) {
+      newErrors.name = "Full Name is required";
+    } else if (formData.name.length < 3) {
+      newErrors.name = "Name must be at least 3 characters";
+    }
+    
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else if (!emailRegex.test(formData.email)) {
+      newErrors.email = "Invalid email format";
+    }
+
+    if (!formData.role.trim()) newErrors.role = "Role is required";
+    
+    if (!formData.password) {
+      newErrors.password = "Password is required";
+    } else if (formData.password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -56,10 +94,16 @@ const AdminRegistrationPage = () => {
   
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    // Clear error on change
+    if (errors[e.target.name]) {
+        setErrors({...errors, [e.target.name]: null});
+    }
   };
 
   const handleRegister = async (e) => {
     e.preventDefault();
+    if (!validateForm()) return;
+    
     setMessage('');
     setLoading(true);
     try {
@@ -108,71 +152,120 @@ const AdminRegistrationPage = () => {
       <Header />
       <div 
         ref={sectionRef} 
-        className="min-h-screen bg-cover bg-fixed bg-center" 
-        style={{ backgroundImage: "url('https://images.unsplash.com/photo-1519681393784-d120267933ba?q=80&w=2070&auto=format&fit=crop')" }}
+        className="min-h-screen mt-16 bg-gradient-to-br from-slate-50 via-gray-100 to-indigo-50 dark:from-slate-950 dark:via-gray-900 dark:to-indigo-950 transition-colors duration-300" 
       >
-        <div className="min-h-screen bg-[#1a202c]/80 p-4 sm:p-6 lg:p-8 pt-[120px] backdrop-blur-sm flex items-center justify-center">
-          <div className="max-w-5xl w-full mx-auto flex flex-col md:flex-row items-center gap-8 md:gap-16">
+        <div className="min-h-screen p-4 sm:p-6 lg:p-8 pt-[130px] flex items-center justify-center">
+          <div className="max-w-6xl w-full mx-auto flex flex-col md:flex-row items-center gap-12 lg:gap-24">
             
-            <div className={`w-full md:w-1/2 text-white transition-all duration-1000 ease-out ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`}>
-              <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight">Secure Admin Portal</h1>
-              <p className="text-lg text-gray-300 mt-4">
-                This portal is for authorized personnel only. Please register using your provided access key to manage the hostel facilities.
+            {/* Left Side Text Content */}
+            <div className={`w-full md:w-1/2 text-slate-900 dark:text-white transition-all duration-1000 ease-out ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-10'}`}>
+              <div className="mb-6 inline-block px-3 py-1 bg-indigo-100 dark:bg-indigo-500/10 border border-indigo-200 dark:border-indigo-500/20 rounded-full text-indigo-700 dark:text-indigo-300 text-xs font-bold tracking-widest uppercase transition-colors">
+                Secure Access
+              </div>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white mb-6 transition-colors">
+                Admin <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-600 to-purple-600 dark:from-indigo-400 dark:to-purple-400">Portal</span>
+              </h1>
+              <p className="text-lg text-slate-600 dark:text-slate-400 mb-8 leading-relaxed max-w-lg transition-colors">
+                Authorized personnel only. Register here to gain secure access to the hostel management system.
               </p>
-              <div className="mt-8">
-                {/* Image of secure admin portal */}
-                <div className="bg-gray-800/50 p-6 rounded-xl border border-gray-600">
-                  <svg className="w-full h-auto" viewBox="0 0 200 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect width="200" height="100" rx="10" fill="url(#grad1)"/>
-                    <path d="M50 40 L150 40 M50 60 L150 60" stroke="#4FD1C5" strokeWidth="2"/>
-                    <circle cx="25" cy="50" r="10" fill="#4A5568"/>
-                    <rect x="170" y="45" width="20" height="10" rx="3" fill="#4A5568"/>
-                    <defs>
-                      <linearGradient id="grad1" x1="0" y1="0" x2="200" y2="100">
-                        <stop offset="0%" stopColor="#2D3748" />
-                        <stop offset="100%" stopColor="#1A202C" />
-                      </linearGradient>
-                    </defs>
-                  </svg>
-                  <p className="text-center mt-4 text-sm text-teal-400">End-to-End Encrypted Access</p>
+              
+              <div className="relative group">
+                <div className="absolute -inset-1 bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+                <div className="relative bg-white dark:bg-slate-900/50 p-8 rounded-2xl border border-slate-200 dark:border-slate-700/50 backdrop-blur-sm transition-colors shadow-lg dark:shadow-none">
+                  <div className="grid grid-cols-2 gap-6">
+                      <div>
+                          <p className="text-3xl font-bold text-slate-900 dark:text-white mb-1 transition-colors">100%</p>
+                          <p className="text-sm text-slate-500 dark:text-slate-400 uppercase tracking-wider font-medium transition-colors">Secure</p>
+                      </div>
+                      <div>
+                          <p className="text-3xl font-bold text-slate-900 dark:text-white mb-1 transition-colors">24/7</p>
+                          <p className="text-sm text-slate-500 dark:text-slate-400 uppercase tracking-wider font-medium transition-colors">Availability</p>
+                      </div>
+                      <div className="col-span-2 pt-4 border-t border-slate-200 dark:border-slate-700/50 mt-2 transition-colors">
+                        <div className="flex items-center space-x-2 text-indigo-600 dark:text-indigo-400 text-sm font-medium transition-colors">
+                            <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                            <span>System Operational</span>
+                        </div>
+                      </div>
+                  </div>
                 </div>
               </div>
             </div>
 
+            {/* Right Side Form Card */}
             <div className={`w-full md:w-1/2 transition-all duration-1000 ease-out delay-200 ${isVisible ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-10'}`}>
-              <div className='w-full p-8 bg-gray-900/50 backdrop-blur-lg rounded-2xl shadow-2xl border border-gray-700'>
+              <div className='w-full p-8 md:p-10 bg-white dark:bg-slate-800/60 backdrop-blur-xl rounded-3xl shadow-2xl shadow-slate-200/50 dark:shadow-black/50 border border-slate-200 dark:border-slate-700/50 relative overflow-hidden transition-colors'>
+                
+                {/* Decorative gradients */}
+                <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500/10 rounded-full blur-3xl -mr-32 -mt-32 pointer-events-none"></div>
+                <div className="absolute bottom-0 left-0 w-64 h-64 bg-purple-500/10 rounded-full blur-3xl -ml-32 -mb-32 pointer-events-none"></div>
+                
                 {step === 'register' ? (
-                  <form onSubmit={handleRegister} className="space-y-4">
-                    <h2 className="text-2xl font-bold text-center text-white mb-6">Create Admin Account</h2>
-                    <InputField name="adminId" type="text" placeholder="Admin ID (Access Key)" value={formData.adminId} onChange={handleChange} icon={<svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7h1a2 2 0 012 2v5a2 2 0 01-2 2h-1m-6 0H6a2 2 0 01-2-2V9a2 2 0 012-2h1m6 0V7a2 2 0 00-2-2h-2a2 2 0 00-2 2v0m6 0h-6" /></svg>} />
-                    <InputField name="name" type="text" placeholder="Full Name" value={formData.name} onChange={handleChange} icon={<svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>} />
-                    <InputField name="email" type="email" placeholder="Email" value={formData.email} onChange={handleChange} icon={<svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" /></svg>} />
-                    <InputField name="role" type="text" placeholder="Role in Administration" value={formData.role} onChange={handleChange} icon={<svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V8a2 2 0 00-2-2h-5m-4 0V5a2 2 0 012-2h2a2 2 0 012 2v1m-6 0h6" /></svg>} />
-                    <InputField name="password" type="password" placeholder="Enter your password" value={formData.password} onChange={handleChange} icon={<svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>} />
-                    <button type='submit' className='w-full px-6 py-3 bg-teal-600 text-white font-bold rounded-lg shadow-lg hover:bg-teal-700 focus:outline-none focus:ring-2 focus:ring-teal-400 transition duration-300 transform hover:scale-105 disabled:opacity-50' disabled={loading}>
-                      {loading ? 'Sending OTP...' : 'Register & Send OTP'}
+                  <form onSubmit={handleRegister} className="space-y-6 relative z-10">
+                    <div className="text-center mb-8">
+                       <h2 className="text-2xl font-bold text-slate-900 dark:text-white transition-colors">Create Account</h2>
+                       <p className="text-slate-600 dark:text-slate-400 text-sm mt-2 transition-colors">Enter your details to request access</p>
+                    </div>
+
+                    <div className="space-y-4">
+                        <InputField name="adminId" type="text" placeholder="Admin ID (Access Key)" value={formData.adminId} onChange={handleChange} error={errors.adminId} icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 7h1a2 2 0 012 2v5a2 2 0 01-2 2h-1m-6 0H6a2 2 0 01-2-2V9a2 2 0 012-2h1m6 0V7a2 2 0 00-2-2h-2a2 2 0 00-2 2v0m6 0h-6" /></svg>} />
+                        <InputField name="name" type="text" placeholder="Full Name" value={formData.name} onChange={handleChange} error={errors.name} icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>} />
+                        <InputField name="email" type="email" placeholder="Email Address" value={formData.email} onChange={handleChange} error={errors.email} icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" /></svg>} />
+                        <InputField name="role" type="text" placeholder="Role (e.g., Warden)" value={formData.role} onChange={handleChange} error={errors.role} icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" /></svg>} />
+                        <InputField name="password" type="password" placeholder="Secure Password" value={formData.password} onChange={handleChange} error={errors.password} icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" /></svg>} />
+                    </div>
+                    
+                    <button type='submit' className='w-full px-6 py-4 mt-6 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-bold rounded-xl shadow-lg hover:shadow-indigo-500/30 hover:from-indigo-500 hover:to-purple-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/50 transition-all duration-300 transform hover:-translate-y-0.5 disabled:opacity-70 disabled:hover:translate-y-0 disabled:hover:shadow-none mb-4' disabled={loading}>
+                      {loading ? (
+                        <span className="flex items-center justify-center">
+                          <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                          </svg>
+                          Processing...
+                        </span>
+                      ) : 'Register & Send OTP'}
                     </button>
+                    {!loading && message && (
+                      <div className={`p-4 rounded-xl text-sm font-medium text-center ${message.startsWith('❌') ? 'bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-200 border border-red-200 dark:border-red-500/20' : 'bg-green-50 dark:bg-green-500/10 text-green-700 dark:text-green-200 border border-green-200 dark:border-green-500/20'} transition-colors`}>
+                          {message}
+                      </div>
+                    )}
                   </form>
                 ) : (
-                  <form onSubmit={handleVerifyOTP} className="space-y-6">
-                    <h2 className="text-2xl font-bold text-center text-white">Verify Your Account</h2>
-                    <p className="text-center text-sm text-gray-300">An OTP was sent to {registrationEmail}. Enter the code below.</p>
-                    <InputField name="otp" type="text" placeholder="Enter 6-Digit OTP" value={otp} onChange={(e) => setOtp(e.target.value)} icon={<svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 20l4-16m2 16l4-16M6 9h14M4 15h14" /></svg>} />
-                    <button type="submit" className="w-full px-6 py-3 bg-green-600 text-white font-bold rounded-lg shadow-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-400 transition duration-300 transform hover:scale-105 disabled:opacity-50" disabled={loading || otp.length !== 6}>
-                      {loading ? 'Verifying...' : 'Verify Account'}
+                  <form onSubmit={handleVerifyOTP} className="space-y-6 relative z-10 py-4">
+                     <div className="text-center mb-8">
+                       <h2 className="text-2xl font-bold text-slate-900 dark:text-white transition-colors">Verify Your Email</h2>
+                       <p className="text-slate-600 dark:text-slate-400 text-sm mt-2 transition-colors">Enter the code sent to your email</p>
+                    </div>
+                    <div className="bg-slate-50 dark:bg-slate-900/50 p-4 rounded-xl border border-slate-200 dark:border-slate-700/50 text-center mb-6 transition-colors">
+                       <p className="text-xs text-slate-500 dark:text-slate-500 uppercase tracking-widest font-semibold mb-1 transition-colors">Sent To</p>
+                       <p className="text-indigo-600 dark:text-indigo-400 font-medium transition-colors">{registrationEmail}</p>
+                    </div>
+
+                    <div className="py-2">
+                       <InputField name="otp" type="text" placeholder="Enter 6-Digit OTP" value={otp} onChange={(e) => setOtp(e.target.value)} icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>} />
+                    </div>
+                    
+                    <button type="submit" className="w-full px-6 py-4 bg-gradient-to-r from-green-600 to-emerald-600 text-white font-bold rounded-xl shadow-lg hover:shadow-green-500/30 hover:from-green-500 hover:to-emerald-500 focus:outline-none focus:ring-2 focus:ring-green-500/50 transition-all duration-300 transform hover:-translate-y-0.5 disabled:opacity-70" disabled={loading || otp.length !== 6}>
+                       {loading ? 'Verifying...' : 'Verify & Complete'}
                     </button>
-                    <p className="text-center text-xs text-gray-400 cursor-pointer hover:underline" onClick={() => { setStep('register'); setMessage(''); }}>
-                      Back to registration
-                    </p>
+                    
+                    <div className="pt-4 text-center">
+                        <button type="button" className="text-sm text-slate-500 hover:text-indigo-400 transition-colors flex items-center justify-center gap-2 mx-auto" onClick={() => { setStep('register'); setMessage(''); }}>
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        </svg>
+                        Back to details
+                        </button>
+                    </div>
+                    
+                     {!loading && message && (
+                      <div className={`mt-4 p-4 rounded-xl text-sm font-medium text-center ${message.startsWith('❌') ? 'bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-200 border border-red-200 dark:border-red-500/20' : 'bg-green-50 dark:bg-green-500/10 text-green-700 dark:text-green-200 border border-green-200 dark:border-green-500/20'} transition-colors`}>
+                          {message}
+                      </div>
+                    )}
                   </form>
-                )}
-                {message && (
-                  <p className={`text-center mt-4 p-3 rounded-lg text-sm font-medium ${
-                    message.startsWith('✅') || message.startsWith('🎉') ? 'bg-green-500/20 text-green-200 border border-green-400' : 
-                    'bg-red-500/20 text-red-200 border border-red-400'
-                  }`}>
-                    {message}
-                  </p>
                 )}
               </div>
             </div>

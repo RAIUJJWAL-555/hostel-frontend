@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-// ❌ NavLink हटा दिया गया
+import { motion, AnimatePresence } from 'framer-motion';
+import { NavLink } from 'react-router-dom';
 
 // Icons placeholders (Unchanged)
 const HomeIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-10v10a1 1 0 001 1h3m-6 0a1 1 0 001-1v-4a1 1 0 00-1-1H9a1 1 0 00-1 1v4a1 1 0 001 1h3z" /></svg>;
@@ -12,40 +12,23 @@ const LogoutIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-6 
 const BellIcon = () => <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" /></svg>;
 
 
-// ⭐ NavItems अब paths के बजाय 'view' keys का उपयोग करते हैं
-const linkVariants = {
-    expanded: { opacity: 1, x: 0 },
-    collapsed: { opacity: 0, x: -10 },
-};
+// ⭐ NavItems now use 'path' keys for routing
+// Using absolute paths to ensure correct routing regardless of current nested level
 const navItems = [
-    // 1. Home पर क्लिक करने पर 'applications' दिखे
-    { name: 'Home', view: 'applications', icon: AppsIcon },
-    
-    // 2. Applications पर क्लिक करने पर भी 'applications' दिखे
-    // { name: 'Applications', view: 'applications', icon: AppsIcon },
-    
-    // 3. NEW: Applications की जगह 'Complaints' का ऑप्शन
-    { name: 'Complaints', view: 'complaints', icon: AppsIcon },
-    
-    // 4. Approved Students को हटा दिया गया या नीचे ले जाया गया (Optional: अगर Approved Students भी चाहिए, तो view: 'approved' रहने दें)
-    // { name: 'Approved Students', view: 'approved', icon: ApproveIcon }, 
-    
-    // 5. Fee Status
-    { name: 'Fee Status', view: 'fees', icon: ApproveIcon }, 
-    
-    // 6. Room Inventory
-    { name: 'Room Inventory', view: 'inventory', icon: RoomIcon }, 
-    
-    // 7. Room Allotment
-    { name: 'Room Allotment', view: 'allotment', icon: AllotIcon }, 
-    
-    // 8. Notice Board
-    { name: 'Notice Board', view: 'notices', icon: BellIcon }, 
+    { name: 'Home', path: '/admin/dashboard', end: true, icon: AppsIcon },
+    { name: 'Complaints', path: '/admin/dashboard/complaints', icon: AppsIcon },
+    { name: 'Fee Status', path: '/admin/dashboard/fees', icon: ApproveIcon },
+    { name: 'Room Inventory', path: '/admin/dashboard/inventory', icon: RoomIcon },
+    { name: 'Room Allotment', path: '/admin/dashboard/allotment', icon: AllotIcon },
+    { name: 'Notice Board', path: '/admin/dashboard/notices', icon: BellIcon },
 ];
 
-// ⭐ onNavigate और currentView props यहाँ प्राप्त करें
-const AdminSidebar = ({ onLogout, currentView, onNavigate, isMobileOpen, onClose }) => {
-    const [isExpanded, setIsExpanded] = useState(true);
+const AdminSidebar = ({ onLogout, isMobileOpen, onClose, isExpanded, onToggleExpand, adminName }) => {
+    
+    // Logic for display name (full name vs initial)
+    const displayName = adminName || 'Admin';
+    const finalDisplayName = isExpanded ? displayName : displayName.charAt(0);
+
     const [isMobile, setIsMobile] = useState(false); // Default to false to avoid SSR/hydration issues
 
     useEffect(() => {
@@ -81,133 +64,118 @@ const AdminSidebar = ({ onLogout, currentView, onNavigate, isMobileOpen, onClose
     return (
         <>
             {/* Mobile Overlay Backdrop */}
-            {isMobileOpen && (
-                <div 
-                    className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
-                    onClick={onClose}
-                />
-            )}
+            <AnimatePresence>
+                {isMobileOpen && (
+                    <motion.div 
+                        className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+                        onClick={onClose}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        transition={{ duration: 0.2 }}
+                    />
+                )}
+            </AnimatePresence>
 
             <motion.aside
-                className={`fixed top-0 left-0 h-full bg-[#1F2A44] text-white shadow-2xl z-40 flex flex-col pt-4 pb-4
-                            lg:translate-x-0 lg:static lg:h-screen lg:z-auto`}
-                // Use different variants based on screen size (handled via CSS classes + Framer Motion)
-                // However, Framer Motion 'animate' prop overrides CSS transforms.
-                // We need to conditionally apply animation states.
-                initial={false}
-                animate={
-                    !isMobile 
-                        ? "desktop"
-                        : (isMobileOpen ? "mobileOpen" : "mobileClosed")
-                }
-                variants={sidebarVariants}
-                // Ensure we listen to resize to reset state if needed, but for now simple logic:
-                // On mobile, we rely on isMobileOpen. On desktop, we rely on isExpanded.
-                // Note: Mixing window.innerWidth in render can be tricky with hydration, 
-                // but for a client-side app it's often okay. 
-                // Better approach: Use a media query hook or CSS-first approach.
-                // Let's stick to a robust CSS + Motion approach.
-                style={{
-                    position: 'fixed',
-                    height: '100vh'
-                }}
+                className={`fixed top-0 left-0 h-screen p-4 flex flex-col justify-between 
+                            bg-gray-900 text-white shadow-2xl z-50 transition-all duration-300
+                            lg:translate-x-0 
+                            ${isMobileOpen ? 'translate-x-0 w-64' : '-translate-x-full'}
+                            ${isExpanded ? 'w-64' : 'w-20'}
+                           `}
+                style={{ position: 'fixed', height: '100vh', zIndex: 50 }}
             >
-                {/* Logo/Title Section */}
-                <div className="flex items-center p-4 border-b border-gray-700 h-20 justify-between">
-                    {isExpanded && (
-                        <motion.h1 
-                            className="text-2xl font-extrabold text-blue-300 whitespace-nowrap overflow-hidden"
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 0.1 }}
-                        >
-                            Hostel Admin
-                        </motion.h1>
-                    )}
-                    {!isExpanded && (
-                        <span className="text-2xl font-extrabold text-blue-300 mx-auto">
-                            A
-                        </span>
-                    )}
-                    
-                    {/* Mobile Close Button */}
-                    <button 
-                        onClick={onClose}
-                        className="lg:hidden text-gray-400 hover:text-white"
+                {/* 1. COLLAPSE TOGGLE BUTTON (Desktop Only) */}
+                <button 
+                    onClick={onToggleExpand} 
+                    className="hidden lg:flex absolute top-4 -right-3 z-50 p-1 
+                               bg-indigo-600 text-white rounded-full shadow-lg 
+                               hover:bg-indigo-700 transition duration-300"
+                    aria-label="Toggle Sidebar"
+                >
+                    <motion.svg 
+                        xmlns="http://www.w3.org/2000/svg" 
+                        width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                        animate={{ rotate: isExpanded ? 0 : 180 }}
                     >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                    </button>
+                         <polyline points="15 18 9 12 15 6"></polyline>
+                    </motion.svg>
+                </button>
+
+                {/* Mobile Close Button */}
+                <button 
+                    onClick={onClose}
+                    className="lg:hidden absolute top-4 right-4 text-gray-400 hover:text-red-400 p-1 rounded-full hover:bg-gray-700 transition"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+
+                {/* Logo/Title Section */}
+                <div className="text-3xl font-extrabold text-indigo-400 mb-10 border-b border-gray-700 pb-4 overflow-hidden whitespace-nowrap">
+                    {isExpanded ? (
+                        <>
+                            Hostel<span className="text-indigo-200">Admin</span>
+                            <p className="text-xs font-light text-gray-500 mt-1">Management Portal</p>
+                        </>
+                    ) : (
+                        <span className='text-4xl pl-2'>A</span>
+                    )}
                 </div>
                 
-
                 {/* Navigation Links */}
-                <nav className="flex flex-col flex-grow mt-4 space-y-2 overflow-y-auto">
+                <nav className="space-y-2 flex-grow overflow-y-auto custom-scrollbar">
                     {navItems.map((item) => (
-                        <motion.button 
+                        <NavLink
                             key={item.name}
-                            onClick={() => onNavigate(item.view)} 
-                            className={`flex items-center transition-all duration-300 py-3 ${isExpanded ? 'px-6' : 'px-0 justify-center'} 
-                            ${item.view === currentView ? 'bg-blue-600 text-white' : 'text-gray-300 hover:bg-gray-700 hover:text-white'}`
-                            }
-                            whileHover={{ scale: 1.05 }}
+                            to={item.path}
+                            end={item.end}
+                            onClick={onClose}
+                            className={({ isActive }) => `
+                                p-3 rounded-xl flex items-center space-x-3 cursor-pointer select-none 
+                                font-medium overflow-hidden transition-all duration-300 no-underline
+                                ${isActive
+                                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/30' 
+                                    : 'text-gray-300 hover:bg-indigo-700/50 hover:text-white' 
+                                }
+                                ${!isExpanded ? 'justify-center px-0' : ''}
+                            `}
                         >
-                            <item.icon />
+                            <span className={`text-xl flex-shrink-0`}>
+                                <item.icon />
+                            </span>
+                            
                             {isExpanded && (
-                                <motion.span
-                                    className="ml-4 font-medium whitespace-nowrap overflow-hidden"
-                                    variants={linkVariants}
-                                    initial={false}
-                                    animate={isExpanded ? "expanded" : "collapsed"}
-                                >
+                                <span className="text-base whitespace-nowrap">
                                     {item.name}
-                                </motion.span>
+                                </span>
                             )}
-                        </motion.button>
+                        </NavLink>
                     ))}
                 </nav>
 
-                {/* Collapse/Toggle Button and Logout */}
-                <div className="mt-auto border-t border-gray-700 pt-4 flex flex-col space-y-2">
-                    {/* Toggle Button (Desktop Only) */}
-                    <motion.button
-                        onClick={() => setIsExpanded(!isExpanded)}
-                        className={`hidden lg:flex text-gray-300 hover:bg-gray-700 py-3 transition-colors duration-200 items-center ${isExpanded ? 'px-6 justify-end' : 'justify-center'}`}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                    >
-                        <motion.svg 
-                            xmlns="http://www.w3.org/2000/svg" 
-                            className="h-6 w-6" 
-                            fill="none" 
-                            viewBox="0 0 24 24" 
-                            stroke="currentColor"
-                            animate={{ rotate: isExpanded ? 180 : 0 }} 
-                            transition={{ duration: 0.3 }}
-                        >
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 15l-3-3m0 0l3-3m-3 3h8M3 12h.01" />
-                        </motion.svg>
-                    </motion.button>
+                {/* User Info & Logout Block */}
+                <div className="mt-auto pt-6 border-t border-gray-700">
+                    <div className="mb-4 p-3 bg-gray-700 rounded-lg overflow-hidden transition-all duration-300">
+                        {/* Hide descriptive text when collapsed (not expanded) */}
+                        {isExpanded && <p className="text-xs text-gray-400 mb-1">Logged in as:</p>} 
+                        <span className={`font-bold text-gray-50 ${!isExpanded ? 'text-xl flex justify-center' : 'text-base'}`}>
+                            {finalDisplayName}
+                        </span>
+                    </div>
 
-                    {/* Logout Button */}
                     <motion.button
                         onClick={onLogout}
-                        className={`flex items-center text-red-400 hover:bg-red-900 py-3 transition-colors duration-200 ${isExpanded ? 'px-6' : 'justify-center'}`}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
+                        className={`w-full flex items-center p-3 text-red-400 bg-gray-700 rounded-lg 
+                                   hover:bg-red-600 hover:text-white transition-colors space-x-2 font-medium
+                                   ${!isExpanded ? 'justify-center' : ''}`}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
                     >
                         <LogoutIcon />
-                        {isExpanded && (
-                            <motion.span 
-                                className="ml-4 font-medium whitespace-nowrap overflow-hidden"
-                                variants={linkVariants}
-                                initial={false}
-                                animate={isExpanded ? "expanded" : "collapsed"}
-                            >
-                                Logout
-                            </motion.span>
-                        )}
+                        {isExpanded && <span>Logout</span>}
                     </motion.button>
                 </div>
             </motion.aside>

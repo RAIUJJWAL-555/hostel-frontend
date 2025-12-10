@@ -43,27 +43,27 @@ const HostelFee = () => {
   const hostelFeesdetail = "The hostel fees are structured to be affordable and inclusive, covering accommodation and monthly mess charges. We offer special considerations for different categories as per government norms to ensure that every student has access to comfortable and secure lodging. The total annual fee is a sum of the yearly room fee and 11 months of mess fees.";
 
   const colorVariants = {
-    cyan: { bg: 'bg-cyan-50', border: 'border-cyan-500', text: 'text-cyan-800', shadow: 'hover:shadow-cyan-200/50' },
-    blue: { bg: 'bg-blue-50', border: 'border-blue-500', text: 'text-blue-800', shadow: 'hover:shadow-blue-200/50' },
-    indigo: { bg: 'bg-indigo-50', border: 'border-indigo-500', text: 'text-indigo-800', shadow: 'hover:shadow-indigo-200/50' },
-    pink: { bg: 'bg-pink-50', border: 'border-pink-500', text: 'text-pink-800', shadow: 'hover:shadow-pink-200/50' },
-    purple: { bg: 'bg-purple-50', border: 'border-purple-500', text: 'text-purple-800', shadow: 'hover:shadow-purple-200/50' },
-    violet: { bg: 'bg-violet-50', border: 'border-violet-500', text: 'text-violet-800', shadow: 'hover:shadow-violet-200/50' },
+    cyan: { bg: 'bg-cyan-50 dark:bg-slate-800', border: 'border-cyan-500', text: 'text-cyan-800 dark:text-cyan-300', shadow: 'hover:shadow-cyan-200/50 dark:shadow-none' },
+    blue: { bg: 'bg-blue-50 dark:bg-slate-800', border: 'border-blue-500', text: 'text-blue-800 dark:text-blue-300', shadow: 'hover:shadow-blue-200/50 dark:shadow-none' },
+    indigo: { bg: 'bg-indigo-50 dark:bg-slate-800', border: 'border-indigo-500', text: 'text-indigo-800 dark:text-indigo-300', shadow: 'hover:shadow-indigo-200/50 dark:shadow-none' },
+    pink: { bg: 'bg-pink-50 dark:bg-slate-800', border: 'border-pink-500', text: 'text-pink-800 dark:text-pink-300', shadow: 'hover:shadow-pink-200/50 dark:shadow-none' },
+    purple: { bg: 'bg-purple-50 dark:bg-slate-800', border: 'border-purple-500', text: 'text-purple-800 dark:text-purple-300', shadow: 'hover:shadow-purple-200/50 dark:shadow-none' },
+    violet: { bg: 'bg-violet-50 dark:bg-slate-800', border: 'border-violet-500', text: 'text-violet-800 dark:text-violet-300', shadow: 'hover:shadow-violet-200/50 dark:shadow-none' },
   };
 
   const FeeCard = ({ data, index }) => {
     const colors = colorVariants[data.color] || colorVariants.cyan;
     return (
       <div className={`transition-all duration-700 ease-out transform ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`} style={{ transitionDelay: `${index * 100}ms` }}>
-        <div className={`p-6 rounded-2xl border-t-4 ${colors.bg} ${colors.border} ${colors.shadow} shadow-lg hover:shadow-xl hover:-translate-y-2 h-full flex flex-col`}>
-          <h3 className={`text-2xl font-bold ${colors.text} mb-4`}>{data.category}</h3>
-          <div className="space-y-3 text-left text-gray-700 flex-grow">
+        <div className={`p-6 rounded-2xl border-t-4 ${colors.bg} ${colors.border} ${colors.shadow} shadow-lg hover:shadow-xl hover:-translate-y-2 h-full flex flex-col transition-colors duration-300`}>
+          <h3 className={`text-2xl font-bold ${colors.text} mb-4 transition-colors duration-300`}>{data.category}</h3>
+          <div className="space-y-3 text-left text-gray-700 dark:text-slate-300 flex-grow transition-colors duration-300">
             <p className="flex justify-between items-center"><span>Room Fee</span> <span className="font-semibold text-lg">₹ {data.roomFee}<span className="text-sm font-normal">/year</span></span></p>
             <p className="flex justify-between items-center"><span>Mess Fee</span> <span className="font-semibold text-lg">₹ {data.messFee}<span className="text-sm font-normal">/month</span></span></p>
           </div>
           <div className={`mt-6 pt-4 border-t-2 border-dashed ${colors.border}`}>
-            <p className="text-lg font-semibold text-gray-600">Total Annual Fee</p>
-            <p className={`text-4xl font-extrabold ${colors.text}`}>₹ {data.total}</p>
+            <p className="text-lg font-semibold text-gray-600 dark:text-slate-400 transition-colors duration-300">Total Annual Fee</p>
+            <p className={`text-4xl font-extrabold ${colors.text} transition-colors duration-300`}>₹ {data.total}</p>
           </div>
         </div>
       </div>
@@ -72,7 +72,7 @@ const HostelFee = () => {
 
 
   return (
-    <div ref={sectionRef} className='w-full bg-gray-50 py-20 px-4 sm:px-6 lg:px-8'>
+    <div ref={sectionRef} className='w-full bg-gray-50 dark:bg-slate-950 py-20 px-4 sm:px-6 lg:px-8 transition-colors duration-300'>
       <div className='max-w-6xl mx-auto text-center'>
         
         <h1 className={`text-4xl md:text-5xl font-extrabold text-cyan-900 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>

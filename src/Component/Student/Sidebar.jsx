@@ -5,17 +5,17 @@ import { motion, AnimatePresence } from 'framer-motion';
 // ⭐ NEW ICON: Chevron for desktop collapse/expand
 import { X, LogOut, ChevronLeft, ChevronRight } from 'lucide-react'; 
 
+import { NavLink } from 'react-router-dom';
+
 const navItems = [
-    { name: 'Home', icon: '🏠', view: 'dashboard' },
-    { name: 'Complaint box', icon: '📮', view: 'complaint' },
-    { name: 'Grades', icon: '📈', view: 'grades' },
-    { name: 'Settings', icon: '⚙️', view: 'settings' },
+    { name: 'Home', icon: '🏠', path: '/student/dashboard', end: true },
+    { name: 'Complaint box', icon: '📮', path: '/student/dashboard/complaint' },
+    { name: 'Grades', icon: '📈', path: '/student/dashboard/grades', disabled: true },
+    { name: 'Settings', icon: '⚙️', path: '/student/dashboard/settings', disabled: true },
 ];
 
 const Sidebar = ({ 
     studentName, 
-    currentView, 
-    onNavigate, 
     onLogout, 
     isMobileOpen, 
     onClose,
@@ -92,26 +92,43 @@ const Sidebar = ({
                 
                 {/* Navigation Section */}
                 <nav className="space-y-2 flex-grow">
-                    {navItems.map((item, index) => (
-                        <motion.div
-                            key={index}
-                            onClick={() => { onNavigate(item.view); onClose(); }} 
-                            className={`p-3 rounded-xl flex items-center space-x-3 cursor-pointer select-none 
-                                        font-medium overflow-hidden transition-all duration-300 ${ 
-                                item.view === currentView
-                                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/30' 
-                                    : 'text-gray-300 hover:bg-indigo-700/50 hover:text-white' 
-                            }`}
-                            initial={{ opacity: 0, x: -10 }} 
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: 0.05 * index }}
-                            whileHover={{ scale: 1.02, transition: { type: "spring", stiffness: 400, damping: 20 } }}
-                        >
-                            <span className="text-xl flex-shrink-0">{item.icon}</span> 
-                            {/* Hide text when collapsed */}
-                            {!isCollapsed && <span className="text-base whitespace-nowrap">{item.name}</span>}
-                        </motion.div>
-                    ))}
+                    {navItems.map((item, index) => {
+                         if (item.disabled) {
+                            return (
+                                <motion.div
+                                    key={index}
+                                    className={`p-3 rounded-xl flex items-center space-x-3 select-none 
+                                                font-medium overflow-hidden transition-all duration-300 text-gray-600 cursor-not-allowed opacity-50`}
+                                    initial={{ opacity: 0, x: -10 }} 
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: 0.05 * index }}
+                                >
+                                    <span className="text-xl flex-shrink-0">{item.icon}</span> 
+                                    {!isCollapsed && <span className="text-base whitespace-nowrap">{item.name}</span>}
+                                </motion.div>
+                            );
+                         }
+
+                         return (
+                            <NavLink
+                                key={index}
+                                to={item.path}
+                                end={item.end}
+                                onClick={onClose}
+                                className={({ isActive }) => `
+                                    p-3 rounded-xl flex items-center space-x-3 select-none 
+                                    font-medium overflow-hidden transition-all duration-300 cursor-pointer no-underline
+                                    ${isActive
+                                        ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/30' 
+                                        : 'text-gray-300 hover:bg-indigo-700/50 hover:text-white' 
+                                    }
+                                `}
+                            >
+                                <span className="text-xl flex-shrink-0">{item.icon}</span> 
+                                {!isCollapsed && <span className="text-base whitespace-nowrap">{item.name}</span>}
+                            </NavLink>
+                         );
+                    })}
                 </nav>
 
                 {/* User Info & Logout Block */}

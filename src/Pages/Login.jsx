@@ -5,7 +5,7 @@ import Footer from '../Component/GeneralStudent/Footer'
 
 const Login = () => {
   return (
-    <div>
+    <div className="transition-colors duration-300">
       <Header/>
       <LoginForm/>
       <Footer/>

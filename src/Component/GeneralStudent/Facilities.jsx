@@ -58,23 +58,23 @@ const Facilities = () => {
   ];
 
   return (
-    <div ref={sectionRef} className='py-20 bg-gray-100'>
+    <div ref={sectionRef} className='py-20 bg-gray-100 dark:bg-slate-950 transition-colors duration-300'>
       <div className='max-w-7xl mx-auto px-4'>
-        <h2 className={`text-4xl font-extrabold text-center mb-16 text-cyan-900 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+        <h2 className={`text-4xl font-extrabold text-center mb-16 text-cyan-900 dark:text-cyan-400 transition-all duration-700 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           Our Facilities
         </h2>
         <div className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8'>
           {facilities.map((facility, index) => (
             <div
               key={index}
-              className={`bg-white p-6 rounded-2xl shadow-lg text-center transform hover:-translate-y-2 transition-all duration-500 ease-in-out ${
+              className={`bg-white dark:bg-slate-800 p-6 rounded-2xl shadow-lg text-center transform hover:-translate-y-2 transition-all duration-500 ease-in-out ${
                 isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'
               }`}
               style={{ transitionDelay: `${index * 150}ms` }}
             >
-              <div className="flex justify-center mb-4">{facility.icon}</div>
-              <h3 className='text-xl font-bold mb-2 text-gray-800'>{facility.title}</h3>
-              <p className='text-gray-600'>{facility.description}</p>
+              <div className="flex justify-center mb-4 text-cyan-600 dark:text-cyan-400 transition-colors duration-300">{facility.icon}</div>
+              <h3 className='text-xl font-bold mb-2 text-gray-800 dark:text-white transition-colors duration-300'>{facility.title}</h3>
+              <p className='text-gray-600 dark:text-slate-300 transition-colors duration-300'>{facility.description}</p>
             </div>
           ))}
         </div>
