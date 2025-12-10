@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
-import { motion } from "framer-motion"; 
+import { motion, AnimatePresence } from "framer-motion"; 
+import { Edit2, Trash2, X } from "lucide-react"; 
 
 // Define the Base URL constant for API calls
 const BASE_URL = `${import.meta.env.VITE_API_URL}/api`; 
@@ -25,6 +26,11 @@ const PendingApplications = () => {
   // ⭐ NEW FILTERS
   const [filterGender, setFilterGender] = useState("");
   const [filterBranch, setFilterBranch] = useState("");
+  
+  // Edit Modal State
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [currentStudent, setCurrentStudent] = useState(null);
+  const [editFormData, setEditFormData] = useState({});
 
   const fetchApplications = async () => {
     setLoading(true);
@@ -109,6 +115,57 @@ const PendingApplications = () => {
     }
   };
 
+  const handleDelete = async (id, name) => {
+    if (!confirm(`Are you sure you want to delete student ${name}? This action cannot be undone.`)) return;
+
+    try {
+        const res = await fetch(`${BASE_URL}/hostel/students/${id}`, {
+            method: 'DELETE',
+        });
+        
+        if (!res.ok) {
+            const data = await res.json();
+            throw new Error(data.message || 'Failed to delete student');
+        }
+
+        setApplications(prev => prev.filter(app => app._id !== id));
+        toast.success(`Student ${name} deleted successfully!`);
+
+    } catch (err) {
+        toast.error(`Error deleting student: ${err.message}`);
+    }
+  };
+
+  const openEditModal = (student) => {
+      setCurrentStudent(student);
+      setEditFormData({ ...student });
+      setIsEditModalOpen(true);
+  };
+
+  const handleEditChange = (e) => {
+      setEditFormData({ ...editFormData, [e.target.name]: e.target.value });
+  };
+
+  const handleEditSubmit = async (e) => {
+      e.preventDefault();
+      try {
+          const res = await fetch(`${BASE_URL}/hostel/students/${currentStudent._id}`, {
+              method: 'PATCH',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(editFormData)
+          });
+
+          const data = await res.json();
+          if(!res.ok) throw new Error(data.message || 'Update failed');
+
+          setApplications(prev => prev.map(app => app._id === currentStudent._id ? data.student : app));
+          toast.success("Student details updated successfully!");
+          setIsEditModalOpen(false);
+      } catch (err) {
+          toast.error(`Update Error: ${err.message}`);
+      }
+  };
+
   const sortApplications = (e) => {
     const newSortType = e.target.value;
     setSortType(newSortType);
@@ -143,6 +200,78 @@ const PendingApplications = () => {
 
   return (
     <motion.div>
+        
+      {/* Edit Modal */}
+      <AnimatePresence>
+        {isEditModalOpen && (
+            <motion.div 
+                className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+            >
+                <motion.div 
+                    className="bg-white rounded-2xl shadow-2xl w-full max-w-lg overflow-hidden"
+                    initial={{ scale: 0.9, y: 20 }}
+                    animate={{ scale: 1, y: 0 }}
+                    exit={{ scale: 0.9, y: 20 }}
+                >
+                    <div className="flex justify-between items-center p-6 bg-indigo-600 text-white">
+                        <h3 className="text-xl font-bold">Edit Student Details</h3>
+                        <button onClick={() => setIsEditModalOpen(false)} className="hover:bg-indigo-700 p-1 rounded-full transition">
+                            <X className="w-6 h-6" />
+                        </button>
+                    </div>
+                    
+                    <form onSubmit={handleEditSubmit} className="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+                        <div className="grid grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+                                <input type="text" name="name" value={editFormData.name || ''} onChange={handleEditChange} className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-indigo-500" />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">App Number</label>
+                                <input type="text" name="applicationNumber" value={editFormData.applicationNumber || ''} onChange={handleEditChange} className="w-full p-2 border rounded-lg bg-gray-100 cursor-not-allowed" readOnly />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+                                <input type="email" name="email" value={editFormData.email || ''} onChange={handleEditChange} className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-indigo-500" />
+                            </div>
+                             <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Gender</label>
+                                <select name="gender" value={editFormData.gender || ''} onChange={handleEditChange} className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-indigo-500">
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Branch</label>
+                                <input type="text" name="branch" value={editFormData.branch || ''} onChange={handleEditChange} className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-indigo-500" />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Year</label>
+                                <input type="text" name="year" value={editFormData.year || ''} onChange={handleEditChange} className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-indigo-500" />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Rank</label>
+                                <input type="number" name="rank" value={editFormData.rank || ''} onChange={handleEditChange} className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-indigo-500" />
+                            </div>
+                             <div>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Distance</label>
+                                <input type="number" name="distance" value={editFormData.distance || ''} onChange={handleEditChange} className="w-full p-2 border rounded-lg focus:ring-2 focus:ring-indigo-500" />
+                            </div>
+                        </div>
+
+                        <div className="pt-4 flex justify-end space-x-3 border-t mt-4">
+                            <button type="button" onClick={() => setIsEditModalOpen(false)} className="px-4 py-2 text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200">Cancel</button>
+                            <button type="submit" className="px-4 py-2 text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 shadow-md">Save Changes</button>
+                        </div>
+                    </form>
+                </motion.div>
+            </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Header and Sort Control */}
       <motion.div 
@@ -248,6 +377,15 @@ const PendingApplications = () => {
                                     Reject
                                 </motion.button>
                             </div>
+                             {/* Mobile Edit/Delete Actions */}
+                            <div className="flex justify-end space-x-4 pt-2 border-t border-gray-100">
+                                <button onClick={() => openEditModal(app)} className="text-indigo-600 flex items-center text-sm font-medium hover:text-indigo-800">
+                                    <Edit2 className="w-4 h-4 mr-1" /> Edit
+                                </button>
+                                <button onClick={() => handleDelete(app._id, app.name)} className="text-red-500 flex items-center text-sm font-medium hover:text-red-700">
+                                    <Trash2 className="w-4 h-4 mr-1" /> Delete
+                                </button>
+                            </div>
                         </motion.div>
                     );
                 })}
@@ -323,6 +461,15 @@ const PendingApplications = () => {
                         >
                             Reject
                         </motion.button>
+                        
+                        <div className="flex justify-center space-x-3 mt-2">
+                             <button onClick={() => openEditModal(app)} className="text-gray-400 hover:text-indigo-600 transition" title="Edit Student">
+                                <Edit2 className="w-5 h-5" />
+                            </button>
+                            <button onClick={() => handleDelete(app._id, app.name)} className="text-gray-400 hover:text-red-500 transition" title="Delete Student">
+                                <Trash2 className="w-5 h-5" />
+                            </button>
+                        </div>
                         </td>
                     </motion.tr>
                     );

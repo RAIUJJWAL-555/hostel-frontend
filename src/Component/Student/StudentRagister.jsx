@@ -250,9 +250,9 @@ const StudentRegistrationForm = () => {
                                     name="gender"
                                     value={formData.gender}
                                     onChange={handleChange}
-                                    className={`w-full p-3 pl-10 bg-slate-50 dark:bg-gray-800/40 hover:bg-slate-100 dark:hover:bg-gray-800/60 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 border rounded-xl shadow-sm focus:outline-none focus:ring-2 transition-all duration-300 backdrop-blur-sm ${errors.gender ? 'border-red-500 focus:ring-red-500/50 focus:border-red-500' : 'border-slate-200 dark:border-gray-700/50 focus:border-teal-500/50 focus:ring-teal-500/40 focus:bg-white dark:focus:bg-gray-900/60'}`}
+                                    className={`w-full p-3 pl-10 bg-slate-50 dark:bg-gray-800/40 hover:bg-slate-100 dark:hover:bg-gray-800/60 text-slate-900 dark:text-white border rounded-xl shadow-sm focus:outline-none focus:ring-2 transition-all duration-300 backdrop-blur-sm appearance-none ${!formData.gender ? 'text-slate-400 dark:text-gray-500' : ''} ${errors.gender ? 'border-red-500 focus:ring-red-500/50 focus:border-red-500' : 'border-slate-200 dark:border-gray-700/50 focus:border-teal-500/50 focus:ring-teal-500/40 focus:bg-white dark:focus:bg-gray-900/60'}`}
                                 >
-                                    <option value="">Select Gender</option>
+                                    <option value="" disabled className="text-slate-400 dark:text-gray-500">Select Gender</option>
                                     <option value="Male">Male</option>
                                     <option value="Female">Female</option>
                                     <option value="Other">Other</option>
@@ -263,7 +263,7 @@ const StudentRegistrationForm = () => {
 
                         <InputField name="year" type="text" placeholder="Current Year (1/2/3)" value={formData.year} onChange={handleChange} error={errors.year} icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v11.494m-9-5.747h18" /></svg>} />
                         
-                        <InputField name="branch" type="text" placeholder="Branch Name" value={formData.branch} onChange={handleChange} error={errors.branch} icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>} />
+                        <InputField name="branch" type="text" placeholder="Enter your full branch Name" value={formData.branch} onChange={handleChange} error={errors.branch} icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" /></svg>} />
                         
                         <InputField name="distance" type="number" placeholder="Distance (km)" value={formData.distance} onChange={handleChange} error={errors.distance} icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 01-6 0 3 3 0 016 0z" /></svg>} />
                         

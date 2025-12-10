@@ -11,15 +11,17 @@ const RoomInventory = () => {
   const [newRoom, setNewRoom] = useState({
     roomNumber: '',
     capacity: 2,
-    type: 'Double',
+    type: 'Double', // Default value, hidden from UI
     status: 'Available',
+    hostelType: 'Boys'
   });
   const [loading, setLoading] = useState(false);
+  const [filterHostelType, setFilterHostelType] = useState('All');
+  const [filterRoomNumber, setFilterRoomNumber] = useState('');
 
-  // Room Type options for dropdown
-  const roomTypes = ['Single', 'Double', 'Triple', 'Quad'];
   // Renamed for clarity in the UI
   const roomStatuses = ['Available', 'Full', 'Maintenance']; 
+  const hostelTypes = ['Boys', 'Girls']; 
 
   // --- API Calls ---
 
@@ -63,7 +65,8 @@ const RoomInventory = () => {
       if (!res.ok) throw new Error(data.message || 'Failed to add room.');
 
       toast.success('Room added successfully!', { position: 'top-center' });
-      setNewRoom({ roomNumber: '', capacity: 2, type: 'Double', status: 'Available' });
+      toast.success('Room added successfully!', { position: 'top-center' });
+      setNewRoom({ roomNumber: '', capacity: 2, type: 'Double', status: 'Available', hostelType: 'Boys' });
       fetchRooms();
 
     } catch (err) {
@@ -132,6 +135,12 @@ const RoomInventory = () => {
   };
 
 
+  const filteredRooms = rooms.filter(room => {
+      const matchesHostel = filterHostelType === 'All' || room.hostelType === filterHostelType;
+      const matchesRoomNumber = room.roomNumber.toLowerCase().includes(filterRoomNumber.toLowerCase());
+      return matchesHostel && matchesRoomNumber;
+  });
+
   return (
     <div className="pt-2">
       {/* ⭐ ENHANCEMENT: Title */}
@@ -154,7 +163,7 @@ const RoomInventory = () => {
           </h2>
           
           {/* ⭐ RESPONSIVENESS: Grid layout adjusts on small screens */}
-          <form onSubmit={handleAddRoom} className="grid grid-cols-2 md:grid-cols-5 gap-4 items-end">
+          <form onSubmit={handleAddRoom} className="grid grid-cols-2 md:grid-cols-6 gap-4 items-end">
             
             {/* Room Number */}
             <div className="col-span-2 md:col-span-1">
@@ -186,17 +195,17 @@ const RoomInventory = () => {
               />
             </div>
             
-            {/* Type */}
+            {/* Hostel Type */}
             <div className="md:col-span-1">
-              <label className="block text-xs font-medium text-gray-700 mb-1">Room Type</label>
+              <label className="block text-xs font-medium text-gray-700 mb-1">Hostel Type</label>
               <select
-                name="type"
-                value={newRoom.type}
+                name="hostelType"
+                value={newRoom.hostelType}
                 onChange={handleChange}
                 className="w-full p-2 border border-gray-300 rounded-lg bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition"
                 required
               >
-                {roomTypes.map(type => (
+                {hostelTypes.map(type => (
                   <option key={type} value={type}>{type}</option>
                 ))}
               </select>
@@ -241,8 +250,32 @@ const RoomInventory = () => {
         >
           <h2 className="text-xl font-bold text-gray-800 p-4 md:p-6 bg-gray-50 border-b flex items-center space-x-2">
             <Home className="w-5 h-5 text-indigo-600"/>
-            <span>Existing Rooms Inventory ({rooms.length})</span>
+            <span>Existing Rooms Inventory ({filteredRooms.length})</span>
           </h2>
+
+          {/* Filters */}
+          <div className="p-4 bg-gray-50 border-b flex flex-col md:flex-row gap-4">
+              <div className="flex-1">
+                  <input 
+                      type="text" 
+                      placeholder="Search by Room Number..." 
+                      value={filterRoomNumber}
+                      onChange={(e) => setFilterRoomNumber(e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                  />
+              </div>
+              <div className="w-full md:w-48">
+                  <select
+                      value={filterHostelType}
+                      onChange={(e) => setFilterHostelType(e.target.value)}
+                      className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
+                  >
+                      <option value="All">All Hostels</option>
+                      <option value="Boys">Boys Hostel</option>
+                      <option value="Girls">Girls Hostel</option>
+                  </select>
+              </div>
+          </div>
 
           {loading && <p className="p-6 text-center text-indigo-500">Loading rooms...</p>}
 
@@ -254,7 +287,7 @@ const RoomInventory = () => {
             <>
             {/* ⭐ RESPONSIVENESS: Mobile Card Layout */}
             <div className="grid grid-cols-1 gap-4 md:hidden p-4">
-                {rooms.map((room) => (
+                {filteredRooms.map((room) => (
                     <motion.div 
                         key={`mobile-${room._id}`} 
                         className="bg-white p-5 rounded-xl shadow-md border border-gray-100 flex flex-col space-y-4"
@@ -267,12 +300,9 @@ const RoomInventory = () => {
                                 {room.status}
                             </span>
                         </div>
+                        <div className="text-xs text-indigo-600 font-bold uppercase tracking-wider mb-2">{room.hostelType} Hostel</div>
                         
                         <div className="grid grid-cols-2 gap-4 text-sm text-gray-700 border-t border-b border-gray-50 py-3">
-                            <div>
-                                <span className="text-xs text-gray-500 block">Type</span>
-                                <span className="font-semibold">{room.type}</span>
-                            </div>
                             <div>
                                 <span className="text-xs text-gray-500 block">Capacity</span>
                                 <span className="font-semibold">{room.capacity} Beds</span>
@@ -326,7 +356,7 @@ const RoomInventory = () => {
                 <thead className="bg-indigo-600">
                     <tr>
                     <th className="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">Room No.</th>
-                    <th className="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">Type</th>
+                    <th className="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">Hostel</th>
                     <th className="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">Capacity</th>
                     <th className="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">Occupied</th>
                     <th className="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">Status</th>
@@ -334,7 +364,7 @@ const RoomInventory = () => {
                     </tr>
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-100 text-sm">
-                    {rooms.map((room) => (
+                    {filteredRooms.map((room) => (
                     <motion.tr 
                         key={room._id} 
                         className="hover:bg-indigo-50 transition-colors"
@@ -343,7 +373,7 @@ const RoomInventory = () => {
                         transition={{ duration: 0.3 }}
                     >
                         <td className="px-6 py-4 whitespace-nowrap font-bold text-gray-900">{room.roomNumber}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-gray-700">{room.type}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-indigo-600 font-medium badge">{room.hostelType}</td>
                         <td className="px-6 py-4 whitespace-nowrap text-gray-700">{room.capacity} beds</td>
                         {/* Occupancy Count (Assuming 'occupiedCount' field exists or is calculated) */}
                         <td className="px-6 py-4 whitespace-nowrap font-semibold text-indigo-600">

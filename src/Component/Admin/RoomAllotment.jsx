@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { motion, AnimatePresence } from "framer-motion";
-import { DoorOpen, Users, CheckCircle } from 'lucide-react'; // Icons for visual clarity
+import { DoorOpen, Users, CheckCircle, Trash2 } from 'lucide-react'; // Icons for visual clarity
 
 // Define the Base URL constant for API calls
 const BASE_URL = `${import.meta.env.VITE_API_URL}/api`;
@@ -109,6 +109,29 @@ const RoomAllotment = () => {
       toast.error(`Allotment Error: ${err.message}`);
     } finally {
       setLoading(false);
+    }
+  };
+
+
+  const handleDeleteAllottedStudent = async (id, name, roomNo) => {
+    if (!confirm(`Are you sure you want to delete ${name} from Room ${roomNo}? This will free up the room space.`)) return;
+
+    try {
+        const res = await fetch(`${BASE_URL}/hostel/students/${id}`, {
+            method: 'DELETE',
+        });
+        
+        if (!res.ok) {
+            const data = await res.json();
+            throw new Error(data.message || 'Failed to delete student');
+        }
+
+        toast.success(`Student ${name} deleted and Room ${roomNo} vacated!`);
+        fetchApplications();
+        fetchRooms();
+
+    } catch (err) {
+        toast.error(`Delete Error: ${err.message}`);
     }
   };
   
@@ -330,9 +353,15 @@ const RoomAllotment = () => {
                                 <span className="font-semibold text-green-600 text-xl mr-2">🚪</span>
                                 Room: <span className="font-extrabold ml-1 text-2xl text-indigo-700">{app.roomAllotted}</span>
                             </p>
-                            <p className="text-xs text-gray-500 pt-2 border-t border-gray-100">
+                            <p className="text-xs text-gray-500 pt-2 border-t border-gray-100 mb-2">
                                 App No: <span className='font-mono'>{app.applicationNumber}</span> | Rank: {app.rank}
                             </p>
+                            <button 
+                                onClick={() => handleDeleteAllottedStudent(app._id, app.name, app.roomAllotted)}
+                                className="w-full mt-2 bg-red-50 text-red-600 py-1.5 rounded-lg text-sm font-semibold hover:bg-red-100 flex items-center justify-center transition-colors"
+                            >
+                                <Trash2 className="w-4 h-4 mr-1" /> Delete & Vacate
+                            </button>
                         </motion.div>
                     ))}
                 </motion.div>
