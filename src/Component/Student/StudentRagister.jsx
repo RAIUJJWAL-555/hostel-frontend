@@ -42,6 +42,7 @@ const StudentRegistrationForm = () => {
     distance: '',
     rank: '',
     counselingRound: '',
+    gender: '',
     password:''
   });
   const [loading, setLoading] = useState(false);
@@ -100,6 +101,10 @@ const StudentRegistrationForm = () => {
         newErrors.counselingRound = "Round is required";
     } else if (!/^\d+$/.test(formData.counselingRound)) {
         newErrors.counselingRound = "Digits only";
+    }
+
+    if (!formData.gender) {
+        newErrors.gender = "Gender is required";
     }
 
     if (!formData.password) {
@@ -235,6 +240,26 @@ const StudentRegistrationForm = () => {
                         <div className="md:col-span-2">
                              <InputField name="email" type="email" placeholder="Email Address" value={formData.email} onChange={handleChange} error={errors.email} icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207" /></svg>} />
                         </div>
+
+                         <div className="md:col-span-2">
+                             <div className="relative group">
+                                <span className="absolute inset-y-0 left-0 flex items-center pl-3 text-slate-400 dark:text-gray-400 group-focus-within:text-teal-600 dark:group-focus-within:text-teal-400 transition-colors duration-300">
+                                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" /></svg>
+                                </span>
+                                <select
+                                    name="gender"
+                                    value={formData.gender}
+                                    onChange={handleChange}
+                                    className={`w-full p-3 pl-10 bg-slate-50 dark:bg-gray-800/40 hover:bg-slate-100 dark:hover:bg-gray-800/60 text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-gray-500 border rounded-xl shadow-sm focus:outline-none focus:ring-2 transition-all duration-300 backdrop-blur-sm ${errors.gender ? 'border-red-500 focus:ring-red-500/50 focus:border-red-500' : 'border-slate-200 dark:border-gray-700/50 focus:border-teal-500/50 focus:ring-teal-500/40 focus:bg-white dark:focus:bg-gray-900/60'}`}
+                                >
+                                    <option value="">Select Gender</option>
+                                    <option value="Male">Male</option>
+                                    <option value="Female">Female</option>
+                                    <option value="Other">Other</option>
+                                </select>
+                                {errors.gender && <p className="text-red-500 dark:text-red-400 text-xs mt-1 ml-2 font-medium animate-pulse">{errors.gender}</p>}
+                             </div>
+                         </div>
 
                         <InputField name="year" type="text" placeholder="Current Year (1/2/3)" value={formData.year} onChange={handleChange} error={errors.year} icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v11.494m-9-5.747h18" /></svg>} />
                         

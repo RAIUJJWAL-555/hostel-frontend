@@ -22,6 +22,9 @@ const PendingApplications = () => {
   const [error, setError] = useState(null);
   // ⭐ UPDATED: Default sort to 'high-low' (highest distance first, most relevant)
   const [sortType, setSortType] = useState("high-low");
+  // ⭐ NEW FILTERS
+  const [filterGender, setFilterGender] = useState("");
+  const [filterBranch, setFilterBranch] = useState("");
 
   const fetchApplications = async () => {
     setLoading(true);
@@ -130,7 +133,13 @@ const PendingApplications = () => {
     fetchApplications();
   }, []);
 
-  const pendingApplications = applications.filter(app => app.status === 'pending');
+  const pendingApplications = applications.filter(app => {
+    return (
+      app.status === 'pending' &&
+      (filterGender === "" || app.gender === filterGender) &&
+      (filterBranch === "" || app.branch.toLowerCase().includes(filterBranch.toLowerCase()))
+    );
+  });
 
   return (
     <motion.div>
@@ -145,15 +154,33 @@ const PendingApplications = () => {
           Pending Applications ({pendingApplications.length})
         </h2>
         
-        {/* ⭐ ENHANCEMENT: Select Box Styling */}
-        <select
-          onChange={sortApplications}
-          className="border-2 border-indigo-300 text-sm px-4 py-2 rounded-xl focus:ring-2 focus:ring-indigo-500 transition shadow-sm bg-white" 
-          value={sortType}
-        >
-          <option value="high-low">Sort by: Distance (High to Low)</option>
-          <option value="low-high">Sort by: Distance (Low to High)</option>
-        </select>
+        <div className="flex flex-col sm:flex-row gap-4">
+          <input
+            type="text"
+            placeholder="Filter by Branch"
+            value={filterBranch}
+            onChange={(e) => setFilterBranch(e.target.value)}
+            className="border-2 border-indigo-300 text-sm px-4 py-2 rounded-xl focus:ring-2 focus:ring-indigo-500 transition shadow-sm bg-white"
+          />
+          <select
+            value={filterGender}
+            onChange={(e) => setFilterGender(e.target.value)}
+            className="border-2 border-indigo-300 text-sm px-4 py-2 rounded-xl focus:ring-2 focus:ring-indigo-500 transition shadow-sm bg-white"
+          >
+            <option value="">All Genders</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+          </select>
+          <select
+            onChange={sortApplications}
+            className="border-2 border-indigo-300 text-sm px-4 py-2 rounded-xl focus:ring-2 focus:ring-indigo-500 transition shadow-sm bg-white" 
+            value={sortType}
+          >
+            <option value="high-low">Sort by: Distance (High to Low)</option>
+            <option value="low-high">Sort by: Distance (Low to High)</option>
+          </select>
+        </div>
       </motion.div>
       
       {loading ? (
@@ -197,7 +224,11 @@ const PendingApplications = () => {
                                 </div>
                                 <div className="col-span-2">
                                     <span className="block text-xs text-gray-500">Branch / Year</span>
-                                    <span className="font-medium">{app.branch} ({app.year})</span>
+                                    <span className="font-medium text-gray-800">{app.branch} ({app.year})</span>
+                                </div>
+                                <div>
+                                    <span className="block text-xs text-gray-500">Gender</span>
+                                    <span className="font-medium text-indigo-600">{app.gender}</span>
                                 </div>
                             </div>
 
@@ -234,6 +265,7 @@ const PendingApplications = () => {
                     <th className="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">Rank</th>
                     <th className="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">Distance (km)</th>
                     <th className="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">Branch / Year</th>
+                    <th className="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">Gender</th>
                     <th className="px-6 py-3 text-left text-xs font-bold text-white uppercase tracking-wider">Email</th>
                     <th className="px-6 py-3 text-center text-xs font-bold text-white uppercase tracking-wider">Action</th>
                 </tr>
@@ -268,6 +300,9 @@ const PendingApplications = () => {
                         
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                             {app.branch} ({app.year})
+                        </td>
+                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                            {app.gender}
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{app.email}</td>
 
