@@ -300,7 +300,9 @@ const RoomInventory = () => {
                                 {room.status}
                             </span>
                         </div>
-                        <div className="text-xs text-indigo-600 font-bold uppercase tracking-wider mb-2">{room.hostelType} Hostel</div>
+                        <div className={`text-xs font-bold uppercase tracking-wider mb-2 ${room.hostelType === 'Boys' ? 'text-blue-600' : 'text-pink-600'}`}>
+                            {room.hostelType} Hostel
+                        </div>
                         
                         <div className="grid grid-cols-2 gap-4 text-sm text-gray-700 border-t border-b border-gray-50 py-3">
                             <div>
@@ -373,7 +375,11 @@ const RoomInventory = () => {
                         transition={{ duration: 0.3 }}
                     >
                         <td className="px-6 py-4 whitespace-nowrap font-bold text-gray-900">{room.roomNumber}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-indigo-600 font-medium badge">{room.hostelType}</td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                            <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${room.hostelType === 'Boys' ? 'bg-blue-100 text-blue-800' : 'bg-pink-100 text-pink-800'}`}>
+                                {room.hostelType}
+                            </span>
+                        </td>
                         <td className="px-6 py-4 whitespace-nowrap text-gray-700">{room.capacity} beds</td>
                         {/* Occupancy Count (Assuming 'occupiedCount' field exists or is calculated) */}
                         <td className="px-6 py-4 whitespace-nowrap font-semibold text-indigo-600">

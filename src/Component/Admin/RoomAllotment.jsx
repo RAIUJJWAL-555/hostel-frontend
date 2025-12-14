@@ -230,7 +230,7 @@ const RoomAllotment = () => {
                                 <option value="" disabled>-- Select Room --</option>
                                 {rooms.map(room => (
                                     <option key={room._id} value={room.roomNumber}>
-                                        {room.roomNumber} ({room.type})
+                                        {room.roomNumber} ({room.hostelType} - {room.type})
                                     </option>
                                 ))}
                                 {rooms.length === 0 && <option value="" disabled>No Available Rooms</option>}
@@ -290,7 +290,7 @@ const RoomAllotment = () => {
                                 <option value="" disabled>-- Select Room ({rooms.length}) --</option>
                                 {rooms.map(room => (
                                     <option key={room._id} value={room.roomNumber}>
-                                        {room.roomNumber} ({room.type} - {room.occupancyCount}/{room.capacity})
+                                        {room.roomNumber} ({room.hostelType} - {room.type} - {room.occupancyCount}/{room.capacity})
                                     </option>
                                 ))}
                                 {rooms.length === 0 && <option value="" disabled>No Available Rooms</option>}
