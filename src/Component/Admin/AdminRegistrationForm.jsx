@@ -110,7 +110,7 @@ const AdminRegistrationPage = () => {
       const res = await fetch(`${BASE_URL}/admin/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({ ...formData, adminId: formData.adminId.trim() }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || 'Registration failed');

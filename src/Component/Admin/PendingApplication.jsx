@@ -26,6 +26,7 @@ const PendingApplications = () => {
   // ⭐ NEW FILTERS
   const [filterGender, setFilterGender] = useState("");
   const [filterBranch, setFilterBranch] = useState("");
+  const [filterMinDistance, setFilterMinDistance] = useState("");
   
   // Edit Modal State
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -194,7 +195,8 @@ const PendingApplications = () => {
     return (
       app.status === 'pending' &&
       (filterGender === "" || app.gender === filterGender) &&
-      (filterBranch === "" || app.branch.toLowerCase().includes(filterBranch.toLowerCase()))
+      (filterBranch === "" || app.branch.toLowerCase().includes(filterBranch.toLowerCase())) &&
+      (filterMinDistance === "" || app.distance >= Number(filterMinDistance))
     );
   });
 
@@ -275,39 +277,54 @@ const PendingApplications = () => {
 
       {/* Header and Sort Control */}
       <motion.div 
-        className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6" 
+        className="flex flex-col xl:flex-row justify-between items-start xl:items-center mb-6 gap-4" 
         variants={itemVariants}
+        initial="hidden"
+        animate="visible"
       >
         {/* ⭐ ENHANCEMENT: Title */}
-        <h2 className="text-2xl font-extrabold text-indigo-700 mb-4 sm:mb-0">
+        <h2 className="text-2xl font-extrabold text-indigo-700">
           Pending Applications ({pendingApplications.length})
         </h2>
         
-        <div className="flex flex-col sm:flex-row gap-4">
+        <div className="flex flex-col sm:flex-row gap-3 w-full xl:w-auto">
+           {/* Branch Filter */}
           <input
             type="text"
-            placeholder="Filter by Branch"
+            placeholder="Filter Branch..."
             value={filterBranch}
             onChange={(e) => setFilterBranch(e.target.value)}
-            className="border-2 border-indigo-300 text-sm px-4 py-2 rounded-xl focus:ring-2 focus:ring-indigo-500 transition shadow-sm bg-white"
+            className="border-2 border-indigo-300 text-sm px-3 py-2 rounded-xl focus:ring-2 focus:ring-indigo-500 transition shadow-sm bg-white flex-1"
           />
+          
+          {/* Gender Filter */}
           <select
             value={filterGender}
             onChange={(e) => setFilterGender(e.target.value)}
-            className="border-2 border-indigo-300 text-sm px-4 py-2 rounded-xl focus:ring-2 focus:ring-indigo-500 transition shadow-sm bg-white"
+            className="border-2 border-indigo-300 text-sm px-3 py-2 rounded-xl focus:ring-2 focus:ring-indigo-500 transition shadow-sm bg-white flex-1"
           >
             <option value="">All Genders</option>
             <option value="Male">Male</option>
             <option value="Female">Female</option>
-            <option value="Other">Other</option>
           </select>
+          
+           {/* Distance Filter (Min) */}
+           <input
+            type="number"
+            placeholder="Min Distance (km)"
+            value={filterMinDistance}
+            onChange={(e) => setFilterMinDistance(e.target.value)}
+            className="border-2 border-indigo-300 text-sm px-3 py-2 rounded-xl focus:ring-2 focus:ring-indigo-500 transition shadow-sm bg-white flex-1"
+          />
+
+          {/* Sort Control */}
           <select
             onChange={sortApplications}
-            className="border-2 border-indigo-300 text-sm px-4 py-2 rounded-xl focus:ring-2 focus:ring-indigo-500 transition shadow-sm bg-white" 
+            className="border-2 border-indigo-300 text-sm px-3 py-2 rounded-xl focus:ring-2 focus:ring-indigo-500 transition shadow-sm bg-white flex-1" 
             value={sortType}
           >
-            <option value="high-low">Sort by: Distance (High to Low)</option>
-            <option value="low-high">Sort by: Distance (Low to High)</option>
+            <option value="high-low">Sort: Dist (High-Low)</option>
+            <option value="low-high">Sort: Dist (Low-High)</option>
           </select>
         </div>
       </motion.div>
